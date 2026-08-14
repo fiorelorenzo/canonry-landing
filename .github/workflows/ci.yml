@@ -1,0 +1,161 @@
+# The deploy workflow refuses to release a tag whose CI run here did not complete
+# successfully, so job names are written for a human scanning the Actions tab rather
+# than for brevity.
+#
+# Adapted from the canonry product repository's .github/workflows/ci.yml (this app
+# used to be apps/landing there, covered by that repository's workspace-wide
+# `pnpm -r --sequential` run): this workflow now runs this repository's own scripts
+# directly, with no workspace and no Qdrant service, because this app never talks to
+# vector search.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Node version pinned here must track .node-version; pnpm/setup has no
+# node-version-file input.
+env:
+  NODE_VERSION: 22.22.3
+
+jobs:
+  test:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm and Node
+        uses: pnpm/setup@v2
+        with:
+          runtime: node@${{ env.NODE_VERSION }}
+          cache: true
+          install: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm check
+
+      # No database service here: waitlist.test.ts passes a fake `postgres.Sql`
+      # (see vite.config.ts's own comment on why), so the unit suite never needs a
+      # real Postgres.
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+  docker-boot:
+    name: Build image, apply migration, verify served health
+    runs-on: ubuntu-latest
+    needs: test
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: canonry
+          POSTGRES_PASSWORD: canonry
+          POSTGRES_DB: canonry_landing
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm and Node
+        uses: pnpm/setup@v2
+        with:
+          runtime: node@${{ env.NODE_VERSION }}
+          cache: true
+          install: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Apply the waitlist migration
+        run: pnpm migrate
+        env:
+          DATABASE_URL: postgres://canonry:canonry@127.0.0.1:5432/canonry_landing
+
+      - name: Compute build identifiers
+        id: version
+        run: |
+          echo "version=0.0.0-ci.${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          echo "commit=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Build runtime image
+        run: |
+          docker build -f docker/Dockerfile \
+            --build-arg APP_VERSION=${{ steps.version.outputs.version }} \
+            --build-arg APP_COMMIT=${{ steps.version.outputs.commit }} \
+            -t canonry-landing:ci .
+
+      # --network host: the simplest way for the freshly built container to reach the
+      # postgres service container, which GitHub-hosted runners publish to the
+      # runner's own loopback interface, not a shared docker network.
+      - name: Boot the image against Postgres
+        run: |
+          docker run -d --name canonry-landing-ci \
+            --network host \
+            -e DATABASE_URL=postgres://canonry:canonry@127.0.0.1:5432/canonry_landing \
+            -e ORIGIN=http://127.0.0.1:5195 \
+            canonry-landing:ci
+
+      - name: Wait for /healthz and verify the served version
+        run: |
+          body=""
+          for _ in $(seq 1 30); do
+            if body=$(curl -sf http://127.0.0.1:5195/healthz); then
+              break
+            fi
+            sleep 1
+          done
+          if [ -z "$body" ]; then
+            echo "::error::landing container never answered /healthz"
+            exit 1
+          fi
+          echo "$body" | jq .
+
+          served_version=$(echo "$body" | jq -r '.version')
+          served_db=$(echo "$body" | jq -r '.db')
+
+          if [ "$served_version" != "${{ steps.version.outputs.version }}" ]; then
+            echo "::error::served version '$served_version' does not match the built artifact '${{ steps.version.outputs.version }}' -- stale image"
+            exit 1
+          fi
+          if [ "$served_db" != "true" ]; then
+            echo "::error::/healthz reports db=false while booted against a healthy, migrated Postgres"
+            exit 1
+          fi
+
+      - name: Waitlist form works end to end against the built image
+        run: |
+          body=$(curl -sf -X POST http://127.0.0.1:5195/?/subscribe -d 'email=ci-check@example.com' -H 'x-sveltekit-action: true')
+          echo "$body"
+          count=$(docker run --rm --network host -e PGPASSWORD=canonry postgres:16 \
+            psql -h 127.0.0.1 -U canonry -d canonry_landing -tAc \
+            "select count(*) from waitlist_signup where email='ci-check@example.com'")
+          if [ "$count" != "1" ]; then
+            echo "::error::expected exactly one waitlist_signup row for ci-check@example.com, got '$count'"
+            exit 1
+          fi
+
+      - name: Container logs
+        if: always()
+        run: docker logs canonry-landing-ci || true
+
+      - name: Stop container
+        if: always()
+        run: docker rm -f canonry-landing-ci || true

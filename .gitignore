@@ -7,3 +7,13 @@ dist/
 !.env.example
 *.log
 .DS_Store
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Editor / OS noise not already covered
+Thumbs.db
+
+# Local override files nobody should commit
+!.env.test

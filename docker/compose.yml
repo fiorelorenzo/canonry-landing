@@ -1,0 +1,68 @@
+# Local/dev stack for this repository: the app plus its own Postgres, both on
+# loopback. Deliberately bundles its own Postgres rather than reaching across into the
+# canonry product repository's dev database (docker/compose.dev.yml over there, port
+# 127.0.0.1:55432): the whole point of this repository owning migrations/ is that its
+# schema, and therefore its database, is no longer shared with that app. A developer
+# who only clones this repository gets a complete local stack from this one file.
+#
+# Run from the repo root:
+#   docker compose -f docker/compose.yml up -d --build
+#   DATABASE_URL=postgres://canonry:canonry@127.0.0.1:55195/canonry_landing pnpm migrate
+#
+# (the migration is an explicit step, run once against a fresh database - see the
+# README - not run automatically by this compose file or by the image's own CMD.)
+name: canonry-landing-dev
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: canonry
+      POSTGRES_PASSWORD: canonry
+      POSTGRES_DB: canonry_landing
+    ports:
+      - '127.0.0.1:55195:5432'
+    volumes:
+      - landing-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U canonry -d canonry_landing']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  landing:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        APP_VERSION: ${APP_VERSION:-0.0.0-dev}
+        APP_COMMIT: ${APP_COMMIT:-unknown}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:5195:5195'
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      PORT: '5195'
+      DATABASE_URL: postgres://canonry:canonry@postgres:5432/canonry_landing
+      ORIGIN: ${ORIGIN:-http://127.0.0.1:5195}
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          'fetch("http://127.0.0.1:5195/healthz").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))'
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+volumes:
+  landing-pgdata:

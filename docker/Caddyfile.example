@@ -1,0 +1,26 @@
+# Example Caddy config for prodbox. Caddy is the only thing facing the internet: the
+# container port is bound to 127.0.0.1, and Caddy runs on the host (not inside
+# docker/deploy/compose.deploy.yml), terminating TLS and reverse-proxying to the
+# loopback port this stack's container published.
+#
+# Copy to /etc/caddy/Caddyfile (or fold into an existing one alongside the canonry
+# product repository's own Caddyfile - the two are independent, unrelated blocks),
+# replace the domain, reload Caddy.
+#
+# Two isolated stacks live on this box, prod and preview, each with its own subdomain
+# and its own container on a different loopback port (5195 prod, 5295 preview - see
+# docker/deploy/secrets.env.example). Both DNS records must be grey-clouded
+# (Cloudflare: DNS-only, proxy switch off) rather than orange-clouded, or Caddy cannot
+# complete its own ACME challenge and terminate TLS directly:
+#
+#   canonry.io          A/AAAA  <prodbox IP>   ; prod, grey-clouded
+#   preview.canonry.io   A/AAAA  <prodbox IP>   ; preview, grey-clouded
+
+canonry.io {
+	reverse_proxy 127.0.0.1:5195
+}
+
+# Preview stack: same shape, its own compose project and its own port.
+# preview.canonry.io {
+# 	reverse_proxy 127.0.0.1:5295
+# }
