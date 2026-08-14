@@ -9,8 +9,9 @@ have to match what the product actually does.
 
 SvelteKit with `adapter-node`, built into a container and served on prodbox behind
 Caddy, exactly like `loombox-landing`. Port assignment on that box: **`127.0.0.1:5195`**
-(5185-5192 are taken by loombox, pitchbox and mastro; 5193 and 5194 are reserved for
-Canonry's own prod and preview web). `ORIGIN=https://canonry.io`.
+(5185-5192 are taken by loombox, pitchbox and mastro; 5196 and 5296 are Canonry's own
+prod and preview web, baked into both repositories' code, compose files and CI).
+`ORIGIN=https://canonry.io`.
 
 ## What the copy may and may not say
 

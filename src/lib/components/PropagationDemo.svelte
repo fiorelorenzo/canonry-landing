@@ -26,8 +26,8 @@
 	];
 
 	function statusText(o: Outcome): string {
-		if (o === 'accepted') return `Accepted \u2014 added to ${DIFF.entity}'s revision history`;
-		if (o === 'rejected') return 'Rejected \u2014 one-word reason recorded';
+		if (o === 'accepted') return `Accepted, added to ${DIFF.entity}'s revision history`;
+		if (o === 'rejected') return 'Rejected, one-word reason recorded';
 		return 'Awaiting your review';
 	}
 </script>

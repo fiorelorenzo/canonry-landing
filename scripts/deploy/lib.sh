@@ -39,6 +39,48 @@ require_env() {
 	done
 }
 
+# require_url NAME VALUE - fails unless VALUE parses as a URL with a scheme and a
+# host. Never echoes VALUE (passed to python3 over an environment variable, not
+# argv, so it never shows up in `ps`), so a DSN whose password is embedded in it is
+# still safe to pass here.
+#
+# Written for DATABASE_URL: a password built from `openssl rand -base64` can contain
+# `/`, `+` or `=`, and unescaped in a postgres:// DSN any of those breaks URL parsing
+# without a message that names the actual problem - the postgres npm client's own
+# `new URL(...)` throws a bare "Invalid URL", and only once a request reaches the app
+# container. Calling this before any container starts turns that into an immediate,
+# named failure instead of a 90-second health-gate timeout followed by a container-log
+# read.
+require_url() {
+	name="$1"
+	value="$2"
+	# Plain (non-dash) heredoc: `<<-` strips *every* leading tab from *every*
+	# line, which would flatten this script's nested if/try block down to
+	# invalid Python. Left unindented (flush left) instead of tab-matched to
+	# the surrounding shell for that reason.
+	if ! DSN_TO_CHECK="$value" python3 - >/dev/null 2>&1 <<'PY'
+import os, sys
+from urllib.parse import urlsplit
+u = urlsplit(os.environ["DSN_TO_CHECK"])
+# scheme, a resolvable host, and an explicit userinfo separator ('@') are
+# required; a password containing a raw '/' makes urlsplit stop the
+# authority section before it ever reaches the real '@', so u.hostname
+# ends up being a fragment of the userinfo instead (e.g. 'canonry') and
+# whatever follows its ':' lands in u.port, which then fails to parse as
+# an integer -- that ValueError is exactly the case this exists to catch.
+ok = bool(u.scheme) and bool(u.hostname) and "@" in u.netloc
+if ok:
+    try:
+        u.port
+    except ValueError:
+        ok = False
+sys.exit(0 if ok else 1)
+PY
+	then
+		die "$name does not parse as a URL -- if its password came from 'openssl rand -base64', it likely contains an unescaped '/', '+' or '=' (see docker/deploy/secrets.env.example for a URL-safe generation command)"
+	fi
+}
+
 # --- atomic symlink flip ------------------------------------------------
 # `ln -sfn` alone is not atomic: with an existing destination GNU coreutils unlinks it
 # and then creates the new link as two separate syscalls, leaving a window where the
