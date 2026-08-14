@@ -142,13 +142,33 @@ jobs:
 
       - name: Waitlist form works end to end against the built image
         run: |
-          body=$(curl -sf -X POST http://127.0.0.1:5195/?/subscribe -d 'email=ci-check@example.com' -H 'x-sveltekit-action: true')
+          # The Origin header is required, not decoration: SvelteKit rejects a cross-origin
+          # form POST with 403 before the action runs, and the container is started with
+          # ORIGIN=http://127.0.0.1:5195 above. Without it this step failed with an empty
+          # body and zero rows, which reads like a broken form rather than a rejected request.
+          body=$(curl -sf -X POST http://127.0.0.1:5195/?/subscribe \
+            -H 'origin: http://127.0.0.1:5195' \
+            -H 'x-sveltekit-action: true' \
+            -d 'email=ci-check@example.com')
           echo "$body"
           count=$(docker run --rm --network host -e PGPASSWORD=canonry postgres:16 \
             psql -h 127.0.0.1 -U canonry -d canonry_landing -tAc \
             "select count(*) from waitlist_signup where email='ci-check@example.com'")
           if [ "$count" != "1" ]; then
             echo "::error::expected exactly one waitlist_signup row for ci-check@example.com, got '$count'"
+            exit 1
+          fi
+          # Same address again: the form treats a repeat as success and the unique index keeps
+          # the row count at one, which is the behaviour a visitor pressing submit twice needs.
+          curl -sf -X POST http://127.0.0.1:5195/?/subscribe \
+            -H 'origin: http://127.0.0.1:5195' \
+            -H 'x-sveltekit-action: true' \
+            -d 'email=ci-check@example.com' >/dev/null
+          again=$(docker run --rm --network host -e PGPASSWORD=canonry postgres:16 \
+            psql -h 127.0.0.1 -U canonry -d canonry_landing -tAc \
+            "select count(*) from waitlist_signup where email='ci-check@example.com'")
+          if [ "$again" != "1" ]; then
+            echo "::error::a second submission of the same address changed the row count to '$again'"
             exit 1
           fi
 
