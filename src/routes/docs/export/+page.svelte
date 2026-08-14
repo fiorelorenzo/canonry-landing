@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Exporting your world — Canonry</title>
+	<title>Exporting your world: Canonry</title>
 	<meta
 		name="description"
 		content="What the markdown export contains, what it leaves out, and what still works with generation switched off."

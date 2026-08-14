@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-	<title>Canonry — a wiki with a copilot that never writes without you</title>
+	<title>Canonry: a wiki with a copilot that never writes without you</title>
 	<meta
 		name="description"
 		content="Change one entry and Canonry tells you which other entries that touches, drafts each update, and waits for you to accept or throw it away, one by one."

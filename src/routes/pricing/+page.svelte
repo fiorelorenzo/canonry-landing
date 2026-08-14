@@ -1,5 +1,5 @@
 <svelte:head>
-	<title>Pricing — Canonry</title>
+	<title>Pricing: Canonry</title>
 	<meta
 		name="description"
 		content="What costs credits, what does not, and why there is no number here yet."
