@@ -1,6 +1,6 @@
 /**
- * The waiting list's one action, on the English path. `handleSubscribe` (`$lib/server/
- * waitlist.ts`) does the real work and is shared byte-for-byte with `/it`'s own
+ * The waiting list's one action, on the Italian path. `handleSubscribe` (`$lib/server/
+ * waitlist.ts`) does the real work and is shared byte-for-byte with `/`'s own
  * `+page.server.ts` (issue #129) - this file is a one-line wrapper supplying the
  * connection, because SvelteKit resolves `actions` per route and there is no way to
  * point two routes at one action file directly.

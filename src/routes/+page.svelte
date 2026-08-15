@@ -2,6 +2,7 @@
 	import { resolve } from '$app/paths';
 	import PropagationDemo from '$lib/components/PropagationDemo.svelte';
 	import WaitlistForm from '$lib/components/WaitlistForm.svelte';
+	import { OG_LOCALE } from '$lib/i18n';
 	import type { ActionData, PageData } from './$types';
 
 	let { form, data }: { form: ActionData; data: PageData } = $props();
@@ -15,6 +16,14 @@
 	<title>{title}</title>
 	<meta name="description" content={description} />
 
+	<!-- Issue #129: `/` is the English original, `/it` its Italian counterpart - both
+	     directions declared so a crawler indexes each path in its own language instead of
+	     picking one arbitrarily, and `x-default` points back at this page since English is
+	     what a visitor gets when nothing else disambiguates. -->
+	<link rel="alternate" hreflang="en" href={data.origin} />
+	<link rel="alternate" hreflang="it" href={`${data.origin}/it`} />
+	<link rel="alternate" hreflang="x-default" href={data.origin} />
+
 	<meta property="og:type" content="website" />
 	<meta property="og:site_name" content="Canonry" />
 	<meta property="og:title" content={title} />
@@ -23,6 +32,8 @@
 	<meta property="og:image" content={`${data.origin}/og.png`} />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
+	<meta property="og:locale" content={OG_LOCALE.en} />
+	<meta property="og:locale:alternate" content={OG_LOCALE.it} />
 
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={title} />

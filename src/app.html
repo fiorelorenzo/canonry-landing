@@ -4,6 +4,11 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
+		<!-- hooks.server.ts rewrites the html tag's lang attribute above and its
+		     theme placeholder per request (issue #129, issue G1) - this comment lives
+		     here, after both, on purpose: transformPageChunk's replace is a plain
+		     first-match string swap, so explanatory prose earlier in the document must
+		     never repeat either literal being replaced. -->
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<!-- The alternate is the PNG rather than the ICO on purpose: adapter-node's mime table has
 		no entry for .ico, so it serves with an empty content-type, which browsers sniff but
