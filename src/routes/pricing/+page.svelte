@@ -1,9 +1,29 @@
+<script lang="ts">
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
+
+	const title = 'Pricing: Canonry';
+	const description = 'What costs credits, what does not, and why there is no number here yet.';
+</script>
+
 <svelte:head>
-	<title>Pricing: Canonry</title>
-	<meta
-		name="description"
-		content="What costs credits, what does not, and why there is no number here yet."
-	/>
+	<title>{title}</title>
+	<meta name="description" content={description} />
+
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="Canonry" />
+	<meta property="og:title" content={title} />
+	<meta property="og:description" content={description} />
+	<meta property="og:url" content={`${data.origin}/pricing`} />
+	<meta property="og:image" content={`${data.origin}/og.png`} />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={title} />
+	<meta name="twitter:description" content={description} />
+	<meta name="twitter:image" content={`${data.origin}/og.png`} />
 </svelte:head>
 
 <main id="main" class="mx-auto max-w-2xl px-6 pt-6 pb-16">
