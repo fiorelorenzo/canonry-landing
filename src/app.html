@@ -5,7 +5,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-		<link rel="alternate icon" href="/favicon.ico" />
+		<!-- The alternate is the PNG rather than the ICO on purpose: adapter-node's mime table has
+		no entry for .ico, so it serves with an empty content-type, which browsers sniff but
+		crawlers and link unfurlers need not. The .ico file still ships at the root, because
+		browsers ask for /favicon.ico by themselves without reading any of this. -->
+	<link rel="alternate icon" type="image/png" href="/favicon-32.png" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="manifest" href="/manifest.webmanifest" />
 		<meta name="theme-color" content="#f4efe4" media="(prefers-color-scheme: light)" />
