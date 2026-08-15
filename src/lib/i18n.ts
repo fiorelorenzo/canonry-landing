@@ -29,8 +29,9 @@ export const LOCALE_NAMES: Record<Locale, string> = { en: 'English', it: 'Italia
 /** `og:locale`'s value: Facebook's own underscore-region form, not a BCP-47 tag. */
 export const OG_LOCALE: Record<Locale, string> = { en: 'en_US', it: 'it_IT' };
 
-/** The only two paths that exist (#129): everything under `/it` is Italian, everything
- * else is English. No prefix matching beyond that exact segment - `/italy` is not Italian. */
+/** The only two locales this decides between (#129): everything under `/it` is Italian,
+ * whatever page follows, and everything else is English. No prefix matching beyond that
+ * exact segment - `/italy` is not Italian. */
 export function localeFromPathname(pathname: string): Locale {
 	return pathname === '/it' || pathname.startsWith('/it/') ? 'it' : 'en';
 }

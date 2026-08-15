@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { OG_LOCALE } from '$lib/i18n';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -13,6 +14,14 @@
 	<title>{title}</title>
 	<meta name="description" content={description} />
 
+	<!-- Issue #129: `/docs/export` is this page's English path, `/it/docs/export` its
+	     Italian counterpart on the same page - not the home page, see +layout.svelte's
+	     own doc comment on why the language switch has to preserve the page it is on.
+	     `x-default` matches the home page's own choice of English. -->
+	<link rel="alternate" hreflang="en" href={`${data.origin}/docs/export`} />
+	<link rel="alternate" hreflang="it" href={`${data.origin}/it/docs/export`} />
+	<link rel="alternate" hreflang="x-default" href={`${data.origin}/docs/export`} />
+
 	<meta property="og:type" content="website" />
 	<meta property="og:site_name" content="Canonry" />
 	<meta property="og:title" content={title} />
@@ -21,6 +30,8 @@
 	<meta property="og:image" content={`${data.origin}/og.png`} />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
+	<meta property="og:locale" content={OG_LOCALE.en} />
+	<meta property="og:locale:alternate" content={OG_LOCALE.it} />
 
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={title} />

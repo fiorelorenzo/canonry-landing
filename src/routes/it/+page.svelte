@@ -60,12 +60,11 @@
 	<PropagationDemo />
 
 	<!-- G10 = A: the lock-in answer, one sentence below the demo, linking to the docs page
-	     that states it fully. That page is still English-only (out of this issue's scope);
-	     the link is kept rather than dropped, matching how the rest of a bilingual launch's
-	     first wave normally works. -->
+	     that states it fully - now this page's own Italian counterpart (`/it/docs/export`),
+	     not the English original. -->
 	<p class="mt-3 border-t border-line pt-3 text-sm text-ink-2">
 		Esporta tutto il tuo mondo in markdown, quando vuoi, dalle Impostazioni.
-		<a href={resolve('/docs/export')} class="text-accent hover:underline">
+		<a href={resolve('/it/docs/export')} class="text-accent hover:underline">
 			Cosa contiene il file, e cosa succede se disattivi l'AI &rarr;
 		</a>
 	</p>
