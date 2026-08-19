@@ -21,9 +21,9 @@
 # the whole operation, forward or back.
 #
 # LANDING_IMAGE, APP_VERSION and APP_COMMIT are written into each release's own .env by
-# release.sh, never edited by hand. Everything else (POSTGRES_*, ORIGIN) comes from the
-# stack's shared secrets file (shared/secrets.env), managed on prodbox out of band and
-# never generated or printed by any script here.
+# release.sh, never edited by hand. Everything else (POSTGRES_*, ORIGIN, RESEND_API_KEY,
+# MAIL_FROM) comes from the stack's shared secrets file (shared/secrets.env), managed on
+# prodbox out of band and never generated or printed by any script here.
 #
 # No top-level `name:` here on purpose: every invocation of this file MUST pass
 # --project-name canonry-landing-<stack> (scripts/deploy/lib.sh's compose_cmd does this
@@ -40,6 +40,8 @@ services:
       PORT: '5195'
       DATABASE_URL: ${DATABASE_URL}
       ORIGIN: ${ORIGIN}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      MAIL_FROM: ${MAIL_FROM}
     depends_on:
       postgres:
         condition: service_healthy

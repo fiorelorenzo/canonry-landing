@@ -140,30 +140,53 @@ jobs:
             exit 1
           fi
 
-      - name: Waitlist form works end to end against the built image
+      - name: Waitlist form records consent and reports the missing mail credential loudly
         run: |
+          # This job never sets RESEND_API_KEY/MAIL_FROM (no live Resend credential
+          # belongs in CI), so this is exactly the case $lib/server/mail.ts's own guard
+          # exists for: the signup still gets written and recorded as pending, and the
+          # action reports mail_failed rather than a silent 200. The real send is proved
+          # by hand against a deployed stack, not by this job (see AGENTS.md).
+          #
           # The Origin header is required, not decoration: SvelteKit rejects a cross-origin
           # form POST with 403 before the action runs, and the container is started with
-          # ORIGIN=http://127.0.0.1:5195 above. Without it this step failed with an empty
-          # body and zero rows, which reads like a broken form rather than a rejected request.
-          body=$(curl -sf -X POST http://127.0.0.1:5195/?/subscribe \
+          # ORIGIN=http://127.0.0.1:5195 above.
+          # The HTTP status is 200 even when the action fails, and that is not a bug in the
+          # app: a SvelteKit form action reached with `x-sveltekit-action: true` transports
+          # its own result inside a 200 response, and `fail(400)` shows up as `status: 400`
+          # in the JSON body rather than on the response line. Asserting on the HTTP code
+          # instead was this step's own first version, and CI caught it.
+          status=$(curl -s -o /tmp/subscribe.json -w '%{http_code}' -X POST http://127.0.0.1:5195/?/subscribe \
             -H 'origin: http://127.0.0.1:5195' \
             -H 'x-sveltekit-action: true' \
             -d 'email=ci-check@example.com')
-          echo "$body"
-          count=$(docker run --rm --network host -e PGPASSWORD=canonry postgres:16 \
-            psql -h 127.0.0.1 -U canonry -d canonry_landing -tAc \
-            "select count(*) from waitlist_signup where email='ci-check@example.com'")
-          if [ "$count" != "1" ]; then
-            echo "::error::expected exactly one waitlist_signup row for ci-check@example.com, got '$count'"
+          cat /tmp/subscribe.json
+          if [ "$status" != "200" ]; then
+            echo "::error::expected the action protocol's own 200 transport, got $status"
             exit 1
           fi
-          # Same address again: the form treats a repeat as success and the unique index keeps
-          # the row count at one, which is the behaviour a visitor pressing submit twice needs.
-          curl -sf -X POST http://127.0.0.1:5195/?/subscribe \
+          if ! grep -q '"status":400' /tmp/subscribe.json; then
+            echo "::error::expected the action result to carry status 400, got: $(cat /tmp/subscribe.json)"
+            exit 1
+          fi
+          if ! grep -q 'mail_failed' /tmp/subscribe.json; then
+            echo "::error::expected mail_failed in the action result, got: $(cat /tmp/subscribe.json)"
+            exit 1
+          fi
+          count=$(docker run --rm --network host -e PGPASSWORD=canonry postgres:16 \
+            psql -h 127.0.0.1 -U canonry -d canonry_landing -tAc \
+            "select count(*) from waitlist_signup where email='ci-check@example.com' and consent_confirmed_at is null")
+          if [ "$count" != "1" ]; then
+            echo "::error::expected the signup to still be recorded (pending confirmation) despite the mail failure, got '$count'"
+            exit 1
+          fi
+          # Same address again while still pending: the on-conflict path resends the
+          # confirmation (also mail_failed here) rather than erroring, and the unique
+          # index keeps the row count at one either way.
+          curl -s -o /dev/null -X POST http://127.0.0.1:5195/?/subscribe \
             -H 'origin: http://127.0.0.1:5195' \
             -H 'x-sveltekit-action: true' \
-            -d 'email=ci-check@example.com' >/dev/null
+            -d 'email=ci-check@example.com'
           again=$(docker run --rm --network host -e PGPASSWORD=canonry postgres:16 \
             psql -h 127.0.0.1 -U canonry -d canonry_landing -tAc \
             "select count(*) from waitlist_signup where email='ci-check@example.com'")
