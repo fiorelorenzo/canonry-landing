@@ -5,15 +5,21 @@
 	 * action, so a visitor with JavaScript off still gets a real submission and a
 	 * real result. Duplicate email is success, not an error (see waitlist.ts):
 	 * `form?.ok` is true either way, so this component never has to know or say
-	 * "you're already on the list" as anything other than "you're on the list".
+	 * "you're already on the list" as anything other than "check your email" - which is
+	 * also true for a still-pending resubmission (issue #8: the confirmation gets
+	 * resent), not only for a first signup.
 	 *
 	 * Issue #129: `locale` (from `page.url.pathname` - `/` or `/it`, `$lib/i18n`) picks
 	 * every string here, `form?.error`'s code included - the server action itself has
 	 * no opinion on language (`$lib/server/waitlist.ts`'s own doc comment), only this
-	 * component does.
+	 * component does. The hint sentence is not written here at all: `$lib/consent.ts`'s
+	 * `CONSENT_COPY` is the one source both this component and `$lib/server/waitlist.ts`
+	 * read, because issue #8 records that exact sentence as `waitlist_signup.consent_text`
+	 * - a copy that only lived here could drift from what the database claims was shown.
 	 */
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
+	import { CONSENT_COPY } from '$lib/consent';
 	import { localeFromPathname, type Locale } from '$lib/i18n';
 
 	let { form }: { form?: { ok?: boolean; error?: string } | null } = $props();
@@ -24,42 +30,42 @@
 		Locale,
 		{
 			label: string;
-			hint: string;
 			placeholder: string;
 			join: string;
 			joining: string;
 			success: string;
-			errors: Record<'invalid_email' | 'save_failed' | 'empty_email', string>;
+			errors: Record<'invalid_email' | 'save_failed' | 'mail_failed' | 'empty_email', string>;
 		}
 	> = {
 		en: {
 			label: 'Get notified when there is something to try',
-			hint: 'Your address goes on a list for exactly one email, when that is true. Never sold, never shared.',
 			placeholder: 'you@example.com',
 			join: 'Join the waiting list',
 			joining: 'Joining\u2026',
-			success: "You're on the list.",
+			success: "Check your email to confirm - one click and you're on the list.",
 			errors: {
 				invalid_email: 'That does not look like an email address.',
 				save_failed: 'Could not save that just now. Try again in a moment.',
+				mail_failed: 'Could not send the confirmation email just now. Try again in a moment.',
 				empty_email: 'Enter an email address.'
 			}
 		},
 		it: {
 			label: 'Ricevi una notifica quando ci sarà qualcosa da provare',
-			hint: 'Il tuo indirizzo finisce in una lista per una sola email, quando sarà il momento. Mai venduto, mai condiviso.',
 			placeholder: 'tu@esempio.com',
 			join: "Iscriviti alla lista d'attesa",
 			joining: 'Iscrizione in corso\u2026',
-			success: 'Sei in lista.',
+			success: 'Controlla la tua email per confermare: un clic e sei in lista.',
 			errors: {
 				invalid_email: 'Non sembra un indirizzo email.',
 				save_failed: 'Non siamo riusciti a salvarlo ora. Riprova tra poco.',
+				mail_failed: "Non siamo riusciti a inviare l'email di conferma ora. Riprova tra poco.",
 				empty_email: 'Inserisci un indirizzo email.'
 			}
 		}
 	};
 	let t = $derived(COPY[locale]);
+	let hint = $derived(CONSENT_COPY[locale]);
 	let errorText = $derived(
 		form?.error && form.error in t.errors
 			? t.errors[form.error as keyof typeof t.errors]
@@ -83,7 +89,7 @@
 		{t.label}
 	</label>
 	<p class="mt-1 text-xs text-ink-2">
-		{t.hint}
+		{hint}
 	</p>
 
 	<div class="mt-2 flex flex-wrap gap-2">

@@ -19,11 +19,17 @@ reusing elsewhere.
 pnpm install
 pnpm dev
 ```
-
 Needs `DATABASE_URL` pointing at a Postgres holding the `waitlist_signup` table (see
 below) - `docker/compose.yml` provides one for local development
 (`docker compose -f docker/compose.yml up -d postgres`), matching the fallback
 `vite.config.ts` already uses when `DATABASE_URL` is unset.
+
+Confirming a signup (issue #8's double opt-in) needs `RESEND_API_KEY` and `MAIL_FROM`
+too - a Resend sending key scoped to `canonry.io` and its `Name <address>` from header.
+Without them the form still records the signup, it just cannot send the confirmation
+link: `$lib/server/mail.ts` names the missing variable rather than failing silently.
+`docker/compose.yml` passes both through from a `.env` file in the repo root if one
+exists (`env_file: ../.env`, `required: false`).
 
 ## Apply the migration
 
@@ -32,9 +38,10 @@ DATABASE_URL=postgres://user:pass@host:port/db pnpm migrate
 ```
 
 Runs every file under `migrations/`, in order, against that database. See
-`migrations/0001_waitlist_signup.sql` for what it creates and why this is a plain SQL
-file rather than a migration framework. Safe to run more than once: every statement is
-`if not exists`.
+`migrations/0001_waitlist_signup.sql` and `migrations/0002_waitlist_consent.sql` for
+what each creates and why this is a plain SQL file rather than a migration framework.
+Safe to run more than once: every statement is idempotent (`if not exists`, or a
+`default` plus `drop default`, per 0002's own comment).
 
 ## Other commands
 
