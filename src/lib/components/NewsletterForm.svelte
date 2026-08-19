@@ -1,11 +1,16 @@
 <script lang="ts">
 	/**
+	 * M1 (docs/ux/DECISIONS.md, round eight): renamed from `WaitlistForm.svelte`. This
+	 * is no longer a launch waiting list - the product is out, `app.canonry.io` is the
+	 * primary door now - so this form is demoted to what it honestly is: an explicitly
+	 * named newsletter opt-in for occasional email about new features.
+	 *
 	 * Progressively enhanced but works with `use:enhance` stripped out too - a plain
 	 * POST to `?/subscribe` (this app's own tiny server route) is a full page form
 	 * action, so a visitor with JavaScript off still gets a real submission and a
 	 * real result. Duplicate email is success, not an error (see waitlist.ts):
 	 * `form?.ok` is true either way, so this component never has to know or say
-	 * "you're already on the list" as anything other than "check your email" - which is
+	 * "you're already subscribed" as anything other than "check your email" - which is
 	 * also true for a still-pending resubmission (issue #8: the confirmation gets
 	 * resent), not only for a first signup.
 	 *
@@ -38,11 +43,11 @@
 		}
 	> = {
 		en: {
-			label: 'Get notified when there is something to try',
+			label: 'Get occasional emails about new Canonry features',
 			placeholder: 'you@example.com',
-			join: 'Join the waiting list',
-			joining: 'Joining\u2026',
-			success: "Check your email to confirm - one click and you're on the list.",
+			join: 'Subscribe',
+			joining: 'Subscribing\u2026',
+			success: "Check your email to confirm - one click and you're subscribed.",
 			errors: {
 				invalid_email: 'That does not look like an email address.',
 				save_failed: 'Could not save that just now. Try again in a moment.',
@@ -51,11 +56,11 @@
 			}
 		},
 		it: {
-			label: 'Ricevi una notifica quando ci sarà qualcosa da provare',
+			label: 'Ricevi email occasionali sulle novità di Canonry',
 			placeholder: 'tu@esempio.com',
-			join: "Iscriviti alla lista d'attesa",
+			join: 'Iscriviti',
 			joining: 'Iscrizione in corso\u2026',
-			success: 'Controlla la tua email per confermare: un clic e sei in lista.',
+			success: 'Controlla la tua email per confermare: un clic e sei iscritto.',
 			errors: {
 				invalid_email: 'Non sembra un indirizzo email.',
 				save_failed: 'Non siamo riusciti a salvarlo ora. Riprova tra poco.',
@@ -85,7 +90,7 @@
 		};
 	}}
 >
-	<label for="waitlist-email" class="text-sm font-medium text-ink">
+	<label for="newsletter-email" class="text-sm font-medium text-ink">
 		{t.label}
 	</label>
 	<p class="mt-1 text-xs text-ink-2">
@@ -94,7 +99,7 @@
 
 	<div class="mt-2 flex flex-wrap gap-2">
 		<input
-			id="waitlist-email"
+			id="newsletter-email"
 			name="email"
 			type="email"
 			required

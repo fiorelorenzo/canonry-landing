@@ -18,14 +18,14 @@
 	> = {
 		en: {
 			title: "You're confirmed",
-			body: "Thanks - we'll email you when Canonry launches.",
+			body: "Thanks - we'll email you occasionally about new Canonry features.",
 			failedTitle: 'That link did not work',
 			failedBody:
 				'This confirmation link is not valid. It may already have been used, or the address it was sent to may have been re-submitted since.'
 		},
 		it: {
 			title: 'Confermato',
-			body: 'Grazie: ti scriveremo quando Canonry sarà pronto.',
+			body: 'Grazie: ti scriveremo ogni tanto per le novità di Canonry.',
 			failedTitle: 'Il link non ha funzionato',
 			failedBody:
 				"Questo link di conferma non è valido. Potrebbe essere già stato usato, oppure l'indirizzo a cui è stato inviato potrebbe essere stato inviato di nuovo da allora."

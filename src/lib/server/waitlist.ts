@@ -1,14 +1,15 @@
 /**
- * The waiting list capture. `normalizeEmail` is the pure half, tested without a
- * database; `subscribe` is the one query, taking its `postgres.Sql` as a parameter so
- * its own tests can pass a fake instead of opening a real connection. `handleSubscribe`
- * is the one form action both `/` and `/it` share (issue #129: two paths, one action,
- * neither route re-deriving the other's logic).
+ * The newsletter capture (M1, docs/ux/DECISIONS.md round eight: no longer a launch
+ * waiting list). `normalizeEmail` is the pure half, tested without a database;
+ * `subscribe` is the one query, taking its `postgres.Sql` as a parameter so its own
+ * tests can pass a fake instead of opening a real connection. `handleSubscribe` is the
+ * one form action both `/` and `/it` share (issue #129: two paths, one action, neither
+ * route re-deriving the other's logic).
  *
  * Issue #8: a signup is no longer just a row. `subscribe` records what makes consent
  * demonstrable (`$lib/consent.ts`'s exact copy, the locale it was shown in, the scope -
- * 'launch_only', the only one `WaitlistForm.svelte` offers) and sends the double opt-in
- * link `$lib/server/confirmation-email.ts` builds; nothing is mailable
+ * 'newsletter', the only one `NewsletterForm.svelte` offers as of M1) and sends the
+ * double opt-in link `$lib/server/confirmation-email.ts` builds; nothing is mailable
  * (`consent_confirmed_at is not null`) until the visitor follows it.
  *
  * "Duplicate email" is still success, not an error (a visitor pressing submit twice is
@@ -18,7 +19,10 @@
  * row (migrations/0002_waitlist_consent.sql) matches nothing, sends nothing, and still
  * reports `{ ok: true }` - resending a confirmed address's confirmation would only leak
  * whether that address is already on the list. The unique index on `email` is what makes
- * the statement race-safe either way.
+ * the statement race-safe either way. A pre-M1 `launch_only` row that never confirmed
+ * still matches this WHERE clause and gets re-sent a confirmation - now for the
+ * newsletter, since `subscribe` always writes today's scope and copy, never the scope
+ * a still-pending row was originally collected under.
  *
  * The insert and the mail send are two separate steps, deliberately not one transaction:
  * the write is the durable record that consent was given, and it survives a transport
@@ -27,20 +31,21 @@
  * lands back in the same pending row and tries the send again with the same token.
  *
  * Errors are stable *codes*, not English sentences: this module has no opinion on the
- * visitor's language, `WaitlistForm.svelte` does (issue #129, `/it` renders the same
+ * visitor's language, `NewsletterForm.svelte` does (issue #129, `/it` renders the same
  * codes in Italian). A server action translating its own error text would be exactly
  * the kind of chrome-in-the-wrong-language bug #129 exists to avoid.
  */
 import { fail } from '@sveltejs/kit';
 import type postgres from 'postgres';
-import { CONSENT_COPY, LAUNCH_ONLY_SCOPE } from '$lib/consent';
+import { CONSENT_COPY, NEWSLETTER_SCOPE } from '$lib/consent';
 import type { Locale } from '$lib/i18n';
 import { sendConfirmationEmail } from './confirmation-email';
 
 // Deliberately permissive - anything address-shaped with an @ and a dot after it. This
-// is a waiting list, not account creation: the cost of accepting a slightly malformed
-// address is a bounced notification later, the cost of a false rejection is a lost
+// is a newsletter signup, not account creation: the cost of accepting a slightly
+// malformed address is a bounced email later, the cost of a false rejection is a lost
 // signup on the one page whose entire job is to collect them.
+
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** Trims and lowercases, then returns the address or `null` if it does not look like one. */
@@ -67,7 +72,7 @@ export async function subscribe(
 	try {
 		const rows = await client<{ confirm_token: string }[]>`
 			insert into waitlist_signup (email, consent_text, consent_locale, consent_scope)
-			values (${email}, ${CONSENT_COPY[locale]}, ${locale}, ${LAUNCH_ONLY_SCOPE})
+			values (${email}, ${CONSENT_COPY[locale]}, ${locale}, ${NEWSLETTER_SCOPE})
 			on conflict (email) do update set
 				consent_text = excluded.consent_text,
 				consent_locale = excluded.consent_locale,

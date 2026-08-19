@@ -6,12 +6,13 @@
 	 * in Italian rather than run through a translator (this repository's AGENTS.md:
 	 * "no promise of consistency, no 'unlimited', no em dashes, and the Italian is
 	 * written as Italian rather than translated word for word"). `PropagationDemo` and
-	 * `WaitlistForm` need no `locale` prop: both read it from the URL path themselves
+	 * `NewsletterForm` need no `locale` prop: both read it from the URL path themselves
 	 * (`$lib/i18n`), so this file only supplies the copy that is unique to this page.
 	 */
 	import { resolve } from '$app/paths';
 	import PropagationDemo from '$lib/components/PropagationDemo.svelte';
-	import WaitlistForm from '$lib/components/WaitlistForm.svelte';
+	import { APP_SIGN_UP_URL } from '$lib/app';
+	import NewsletterForm from '$lib/components/NewsletterForm.svelte';
 	import { OG_LOCALE } from '$lib/i18n';
 	import type { ActionData, PageData } from './$types';
 
@@ -69,6 +70,26 @@
 		</a>
 	</p>
 
+	<!-- M1 (docs/ux/DECISIONS.md, round eight): la porta d'ingresso. app.canonry.io ora
+	     serve l'intero prodotto, sano, su una release taggata - il recupero password e
+	     la cancellazione dell'account sono usciti entrambi in v0.8.0, la condizione che
+	     questa call to action aspettava. -->
+	<section
+		class="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-line bg-panel p-4"
+	>
+		<div>
+			<p class="text-sm font-medium text-ink">app.canonry.io è online.</p>
+			<p class="mt-1 text-sm text-ink-2">Crea un account gratuito e inizia il tuo mondo.</p>
+		</div>
+		<a
+			href={APP_SIGN_UP_URL}
+			rel="external"
+			class="shrink-0 rounded-md bg-accent px-4 py-2 text-sm font-medium text-panel hover:brightness-110"
+		>
+			Crea il tuo account
+		</a>
+	</section>
+
 	<section class="mt-12 grid gap-10 sm:grid-cols-2">
 		<div class="max-w-measure text-sm leading-relaxed text-ink-2">
 			<p>
@@ -84,6 +105,6 @@
 			</p>
 		</div>
 
-		<WaitlistForm {form} />
+		<NewsletterForm {form} />
 	</section>
 </main>

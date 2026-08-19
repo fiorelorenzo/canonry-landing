@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import PropagationDemo from '$lib/components/PropagationDemo.svelte';
-	import WaitlistForm from '$lib/components/WaitlistForm.svelte';
+	import { APP_SIGN_UP_URL } from '$lib/app';
+	import NewsletterForm from '$lib/components/NewsletterForm.svelte';
 	import { OG_LOCALE } from '$lib/i18n';
 	import type { ActionData, PageData } from './$types';
 
@@ -60,6 +61,26 @@
 		</a>
 	</p>
 
+	<!-- M1 (docs/ux/DECISIONS.md, round eight): the door. app.canonry.io is the whole
+	     product now, healthy, on a tagged release - password recovery and account
+	     deletion both shipped in v0.8.0, which is what this call to action was waiting
+	     on. -->
+	<section
+		class="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-line bg-panel p-4"
+	>
+		<div>
+			<p class="text-sm font-medium text-ink">app.canonry.io is live.</p>
+			<p class="mt-1 text-sm text-ink-2">Create a free account and start your own world.</p>
+		</div>
+		<a
+			href={APP_SIGN_UP_URL}
+			rel="external"
+			class="shrink-0 rounded-md bg-accent px-4 py-2 text-sm font-medium text-panel hover:brightness-110"
+		>
+			Create your account
+		</a>
+	</section>
+
 	<section class="mt-12 grid gap-10 sm:grid-cols-2">
 		<div class="max-w-measure text-sm leading-relaxed text-ink-2">
 			<p>
@@ -74,6 +95,6 @@
 			</p>
 		</div>
 
-		<WaitlistForm {form} />
+		<NewsletterForm {form} />
 	</section>
 </main>

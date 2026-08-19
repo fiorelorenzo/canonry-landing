@@ -56,9 +56,9 @@ describe('subscribe', () => {
 		expect(result).toEqual({ ok: true });
 		expect(calls[0]).toEqual([
 			'gm@example.com',
-			'Your address goes on a list for exactly one email, when that is true. Never sold, never shared.',
+			'Your address goes on a list for occasional emails about new Canonry features. Never sold, never shared.',
 			'en',
-			'launch_only'
+			'newsletter'
 		]);
 	});
 

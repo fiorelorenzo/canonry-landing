@@ -23,7 +23,7 @@ describe('sendConfirmationEmail', () => {
 		expect(sendMail).toHaveBeenCalledTimes(1);
 		const call = vi.mocked(sendMail).mock.calls[0][0];
 		expect(call.to).toBe('gm@example.com');
-		expect(call.subject).toBe('Confirm your Canonry launch notification');
+		expect(call.subject).toBe('Confirm your Canonry newsletter subscription');
 		expect(call.text).toContain('https://canonry.io/confirm/abc-123');
 		expect(call.html).toContain('https://canonry.io/confirm/abc-123');
 	});
@@ -39,7 +39,7 @@ describe('sendConfirmationEmail', () => {
 		});
 
 		const call = vi.mocked(sendMail).mock.calls[0][0];
-		expect(call.subject).toBe('Conferma la tua iscrizione a Canonry');
+		expect(call.subject).toBe('Conferma la tua iscrizione alla newsletter di Canonry');
 		expect(call.text).toContain('https://canonry.io/confirm/abc-123');
 	});
 
