@@ -151,17 +151,26 @@ jobs:
           # The Origin header is required, not decoration: SvelteKit rejects a cross-origin
           # form POST with 403 before the action runs, and the container is started with
           # ORIGIN=http://127.0.0.1:5195 above.
+          # The HTTP status is 200 even when the action fails, and that is not a bug in the
+          # app: a SvelteKit form action reached with `x-sveltekit-action: true` transports
+          # its own result inside a 200 response, and `fail(400)` shows up as `status: 400`
+          # in the JSON body rather than on the response line. Asserting on the HTTP code
+          # instead was this step's own first version, and CI caught it.
           status=$(curl -s -o /tmp/subscribe.json -w '%{http_code}' -X POST http://127.0.0.1:5195/?/subscribe \
             -H 'origin: http://127.0.0.1:5195' \
             -H 'x-sveltekit-action: true' \
             -d 'email=ci-check@example.com')
           cat /tmp/subscribe.json
-          if [ "$status" != "400" ]; then
-            echo "::error::expected 400 (mail_failed, no RESEND_API_KEY in this job) got $status"
+          if [ "$status" != "200" ]; then
+            echo "::error::expected the action protocol's own 200 transport, got $status"
             exit 1
           fi
-          if ! grep -q '"error":"mail_failed"' /tmp/subscribe.json; then
-            echo "::error::expected {\"error\":\"mail_failed\"} in the response body, got: $(cat /tmp/subscribe.json)"
+          if ! grep -q '"status":400' /tmp/subscribe.json; then
+            echo "::error::expected the action result to carry status 400, got: $(cat /tmp/subscribe.json)"
+            exit 1
+          fi
+          if ! grep -q 'mail_failed' /tmp/subscribe.json; then
+            echo "::error::expected mail_failed in the action result, got: $(cat /tmp/subscribe.json)"
             exit 1
           fi
           count=$(docker run --rm --network host -e PGPASSWORD=canonry postgres:16 \
