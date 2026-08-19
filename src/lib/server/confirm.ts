@@ -10,16 +10,12 @@
  */
 import type postgres from 'postgres';
 import type { Locale } from '$lib/i18n';
-
-// A token that never matched a valid uuid was never one this app minted (confirm_token's
-// column default is gen_random_uuid()) - reject it before it reaches Postgres rather than
-// letting an invalid-uuid cast error surface as a 500.
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+import { CONFIRM_TOKEN_PATTERN } from '$lib/token';
 
 export type ConfirmResult = { ok: true; locale: Locale } | { ok: false };
 
 export async function confirmSignup(client: postgres.Sql, token: string): Promise<ConfirmResult> {
-	if (!UUID_PATTERN.test(token)) {
+	if (!CONFIRM_TOKEN_PATTERN.test(token)) {
 		return { ok: false };
 	}
 

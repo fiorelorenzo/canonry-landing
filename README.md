@@ -38,10 +38,54 @@ DATABASE_URL=postgres://user:pass@host:port/db pnpm migrate
 ```
 
 Runs every file under `migrations/`, in order, against that database. See
-`migrations/0001_waitlist_signup.sql` and `migrations/0002_waitlist_consent.sql` for
-what each creates and why this is a plain SQL file rather than a migration framework.
-Safe to run more than once: every statement is idempotent (`if not exists`, or a
-`default` plus `drop default`, per 0002's own comment).
+`migrations/0001_waitlist_signup.sql`, `migrations/0002_waitlist_consent.sql` and
+`migrations/0003_launch_notification.sql` for what each creates and why this is a plain
+SQL file rather than a migration framework. Safe to run more than once: every statement
+is idempotent (`if not exists`, or a `default` plus `drop default`, per 0002's own
+comment).
+
+## Send the launch notification
+
+The one email owed to the addresses collected before this form became a newsletter
+(issue #14, and M1 in the product repository's `docs/ux/DECISIONS.md`). It goes out once,
+by hand, and only `launch_only` rows are ever selected.
+
+Read it first, in both languages, with no database and no key involved:
+
+```
+node scripts/render-launch-email.ts
+```
+
+Then see who it would go to, which sends nothing and records the plan as a run:
+
+```
+node --env-file=.env scripts/send-launch-notification.ts --mode=plan
+```
+
+Then, when the plan reads right, send it:
+
+```
+node --env-file=.env scripts/send-launch-notification.ts --mode=send --confirm
+```
+
+`--mode=send` refuses to run without `--confirm`, without `RESEND_API_KEY` and
+`MAIL_FROM`, or with an origin that is not https, since the links in a real email have to
+point at the real site. `--only-domain=` and `--limit=` narrow a run, so a first send can
+be one address on a domain you own. `--mode=rehearse` exercises the whole send path
+against a transport that prints instead of reaching the network, and refuses to run at all
+unless every selected address is on a `.invalid` domain.
+
+Every run records itself in `launch_notification_run`, one row per candidate in
+`launch_notification_attempt`, and each notified row carries its own
+`waitlist_signup.launch_notified_at`. A row that has been claimed can never be claimed
+again, and a second delivery record for the same row is a unique-index violation, so the
+send is not re-runnable rather than merely not meant to be re-run. What every row ended up
+as:
+
+```
+select launch_notified_at is not null as notified, launch_notify_excluded_reason, count(*)
+from waitlist_signup where consent_scope = 'launch_only' group by 1, 2;
+```
 
 ## Other commands
 
