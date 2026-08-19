@@ -10,3 +10,9 @@
  * which is why the same decision held the call to action back until both existed.
  */
 export const APP_SIGN_UP_URL = 'https://app.canonry.io/auth/sign-up';
+
+/** Issue #11: this site's own `/privacy` covers only what this property collects (a
+ * newsletter signup). Everything about the product itself, accounts, campaign
+ * content, the AI providers behind it, lives on the product's own fuller page, so
+ * this points there instead of duplicating it. */
+export const APP_PRIVACY_URL = 'https://app.canonry.io/privacy';

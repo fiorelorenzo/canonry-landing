@@ -1,20 +1,25 @@
 <script lang="ts">
 	/**
 	 * Issue #11: la versione italiana della pagina privacy - stessa struttura di
-	 * `../../privacy/+page.svelte`, stesse verifiche contro `migrations/0001` e
-	 * `0002` e `$lib/server/waitlist.ts`, ogni frase scritta in italiano invece che
-	 * tradotta parola per parola (AGENTS.md: "the Italian is written as Italian
-	 * rather than translated word for word").
+	 * `../../privacy/+page.svelte`, stesse verifiche contro `migrations/0001`,
+	 * `migrations/0002`, `$lib/consent.ts` e `$lib/server/waitlist.ts`, ogni frase
+	 * scritta in italiano invece che tradotta parola per parola (AGENTS.md: "the
+	 * Italian is written as Italian rather than translated word for word").
+	 *
+	 * M1 (docs/ux/DECISIONS.md, round eight, canonry-landing#13): quella che era una
+	 * lista d'attesa per il lancio è ora una newsletter dichiarata come tale, e gli
+	 * indirizzi raccolti sotto la vecchia promessa non sono stati reinterpretati in
+	 * silenzio in questa nuova - vedi "A cosa serve" qui sotto.
 	 */
 	import { resolve } from '$app/paths';
+	import { APP_PRIVACY_URL } from '$lib/app';
 	import { OG_LOCALE } from '$lib/i18n';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
 	const title = 'Privacy: Canonry';
-	const description =
-		"Cosa conserviamo quando ti iscrivi alla lista d'attesa, chi lo vede, e come farti cancellare.";
+	const description = 'Cosa conserviamo quando ti iscrivi, chi lo vede, e come farti cancellare.';
 </script>
 
 <svelte:head>
@@ -52,8 +57,8 @@
 	<h1 class="mt-2 text-2xl font-semibold text-ink">Privacy</h1>
 
 	<p class="mt-4 max-w-measure text-sm leading-relaxed text-ink-2">
-		Questa pagina raccoglie una cosa sola: l'indirizzo email che dai alla lista d'attesa. Ecco
-		esattamente cosa gli succede.
+		Questa pagina raccoglie una cosa sola: l'indirizzo email che dai iscrivendoti alla newsletter.
+		Ecco esattamente cosa gli succede.
 	</p>
 
 	<h2 class="mt-8 text-lg font-semibold text-ink">Cosa conserviamo</h2>
@@ -64,10 +69,7 @@
 	<ul class="mt-2 max-w-measure list-disc space-y-1 pl-5 text-sm leading-relaxed text-ink-2">
 		<li>la frase esatta che hai visto accanto al pulsante, nella lingua in cui l'hai vista</li>
 		<li>quale delle due lingue fosse</li>
-		<li>
-			a cosa hai aderito - oggi solo essere avvisato quando Canonry sarà pronto, perché questo
-			modulo non offre ancora una seconda opzione
-		</li>
+		<li>a cosa hai aderito, nel momento in cui ce l'hai detto</li>
 		<li>il momento in cui hai cliccato il link di conferma, vuoto finché non lo fai</li>
 	</ul>
 
@@ -80,10 +82,15 @@
 
 	<h2 class="mt-8 text-lg font-semibold text-ink">A cosa serve</h2>
 	<p class="mt-2 max-w-measure text-sm leading-relaxed text-ink-2">
-		Una sola email: avvisarti quando Canonry sarà pronto. È la promessa accanto al pulsante, ed è
-		quello che registriamo come ambito del consenso - niente di più ampio succede al tuo indirizzo
-		finché una futura versione di questo modulo non aggiunge davvero una seconda opzione, che oggi
-		non esiste.
+		Email occasionali sulle novità di Canonry: è tutta la promessa accanto al pulsante oggi, ed è
+		quello che registriamo come ambito del consenso.
+	</p>
+	<p class="mt-2 max-w-measure text-sm leading-relaxed text-ink-2">
+		Questo modulo prometteva prima una cosa più stretta: una sola email, al lancio di Canonry. Se ti
+		sei iscritto prima che cambiasse, la tua riga non è stata riscritta in silenzio per dire che hai
+		accettato di più - registra ancora quella promessa originale, più stretta. L'unica cosa che
+		cambia quello che dice la tua riga sei tu, iscrivendoti di nuovo: a quel punto vedi prima il
+		testo attuale di questa pagina.
 	</p>
 
 	<h2 class="mt-8 text-lg font-semibold text-ink">Come farti cancellare</h2>
@@ -99,15 +106,15 @@
 		È tutto quello che questa pagina raccoglie. Per come il prodotto stesso, account, contenuto
 		delle campagne, i provider AI dietro di esso, gestisce i dati, vedi la pagina privacy più ampia
 		di Canonry:
-		<a href="https://app.canonry.io/privacy" class="text-accent hover:underline"
+		<a href={APP_PRIVACY_URL} rel="external" class="text-accent hover:underline"
 			>app.canonry.io/privacy</a
 		>. Copre una cosa diversa: cosa succede dopo che hai un account, non cosa succede quando scrivi
 		un'email qui.
 	</p>
 
 	<p class="mt-8 text-xs text-muted">
-		Questa pagina descrive la lista d'attesa esattamente come la definiscono oggi
-		`migrations/0001_waitlist_signup.sql`, `migrations/0002_waitlist_consent.sql` e
-		`$lib/server/waitlist.ts`. Se cambia, cambia anche questa pagina.
+		Questa pagina descrive la newsletter esattamente come la definiscono oggi
+		`migrations/0001_waitlist_signup.sql`, `migrations/0002_waitlist_consent.sql`, `$lib/consent.ts`
+		e `$lib/server/waitlist.ts`. Se cambia, cambia anche questa pagina.
 	</p>
 </main>
