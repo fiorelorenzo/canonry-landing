@@ -16,3 +16,15 @@ export const APP_SIGN_UP_URL = 'https://app.canonry.io/auth/sign-up';
  * content, the AI providers behind it, lives on the product's own fuller page, so
  * this points there instead of duplicating it. */
 export const APP_PRIVACY_URL = 'https://app.canonry.io/privacy';
+
+/**
+ * The published players' wiki of Valdoria Reach, which is **our own world**, not a
+ * customer's: canonry#251 publishes a fifteen-entry slice of it on the prod stack, owned by
+ * an account of ours, and the copy that links here says so on purpose.
+ *
+ * M1 named this as the stronger of the two things a door can point at, and #13 refused to
+ * link it while it answered 404. `scripts/check-external-links.mjs`, which CI runs, is what
+ * keeps that refusal from having to be repeated by hand: if this ever 404s again, the build
+ * says so instead of a reader finding out.
+ */
+export const APP_SAMPLE_WORLD_URL = 'https://app.canonry.io/p/valdoria-reach';

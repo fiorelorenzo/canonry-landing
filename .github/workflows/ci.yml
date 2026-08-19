@@ -52,6 +52,15 @@ jobs:
       - name: Build
         run: pnpm build
 
+      # Issue #15: the door page links a world published on the prod stack, which nothing in
+      # this repository builds and no unit test can reach. #13 checked that link by hand and
+      # then refused to ship it because it answered 404; this is the same check, run every
+      # time, so it cannot ship broken and cannot rot quietly. The only step here that needs
+      # the public internet, and the failure it reports is "what we point at is down", which
+      # is worth a red build on a page whose whole job is getting a stranger somewhere.
+      - name: Every link off this site resolves
+        run: pnpm check:links
+
   docker-boot:
     name: Build image, apply migration, verify served health
     runs-on: ubuntu-latest

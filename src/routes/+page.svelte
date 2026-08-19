@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import PropagationDemo from '$lib/components/PropagationDemo.svelte';
-	import { APP_SIGN_UP_URL } from '$lib/app';
+	import { APP_SAMPLE_WORLD_URL, APP_SIGN_UP_URL } from '$lib/app';
 	import NewsletterForm from '$lib/components/NewsletterForm.svelte';
 	import { OG_LOCALE } from '$lib/i18n';
 	import type { ActionData, PageData } from './$types';
@@ -71,6 +71,16 @@
 		<div>
 			<p class="text-sm font-medium text-ink">app.canonry.io is live.</p>
 			<p class="mt-1 text-sm text-ink-2">Create a free account and start your own world.</p>
+			<!-- Issue #15: M1's other half. The world behind this link is ours, and the copy
+			     says so rather than letting a reader assume they are reading a customer's
+			     campaign. It reads without an account because its GM published a slice of it,
+			     which is the product's own players' wiki and not a demo of one. -->
+			<p class="mt-2 text-sm text-ink-2">
+				Rather read something first?
+				<a href={APP_SAMPLE_WORLD_URL} rel="external" class="text-accent hover:underline">
+					Valdoria Reach is a world of ours, published for its players &rarr;
+				</a>
+			</p>
 		</div>
 		<a
 			href={APP_SIGN_UP_URL}
