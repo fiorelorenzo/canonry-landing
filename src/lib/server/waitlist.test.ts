@@ -5,21 +5,9 @@ import { isActionFailure } from '@sveltejs/kit';
 vi.mock('./confirmation-email', () => ({ sendConfirmationEmail: vi.fn() }));
 
 import { sendConfirmationEmail } from './confirmation-email';
-import { handleSubscribe, normalizeEmail, subscribe } from './waitlist';
+import { handleSubscribe, subscribe } from './waitlist';
 
 const ORIGIN = 'http://127.0.0.1:5195';
-
-describe('normalizeEmail', () => {
-	it('trims and lowercases an address-shaped string', () => {
-		expect(normalizeEmail('  Gm@Example.COM  ')).toBe('gm@example.com');
-	});
-
-	it('rejects strings with no @ or no dot after it', () => {
-		expect(normalizeEmail('not-an-email')).toBeNull();
-		expect(normalizeEmail('gm@example')).toBeNull();
-		expect(normalizeEmail('')).toBeNull();
-	});
-});
 
 /** A minimal fake of the one tagged-template call `subscribe` makes, so this test never
  * opens a real connection. `behavior: 'insert'` simulates the row the on-conflict-do-update

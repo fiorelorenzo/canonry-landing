@@ -1,8 +1,9 @@
 /**
  * The newsletter capture (M1, docs/ux/DECISIONS.md round eight: no longer a launch
- * waiting list). `normalizeEmail` is the pure half, tested without a database;
- * `subscribe` is the one query, taking its `postgres.Sql` as a parameter so its own
- * tests can pass a fake instead of opening a real connection. `handleSubscribe` is the
+ * waiting list). `subscribe` is the one query, taking its `postgres.Sql` as a parameter so
+ * its own tests can pass a fake instead of opening a real connection; the address rule it
+ * applies moved to `$lib/email` when issue #14's launch notification needed the same
+ * answer about a row already in the table. `handleSubscribe` is the
  * one form action both `/` and `/it` share (issue #129: two paths, one action, neither
  * route re-deriving the other's logic).
  *
@@ -38,21 +39,9 @@
 import { fail } from '@sveltejs/kit';
 import type postgres from 'postgres';
 import { CONSENT_COPY, NEWSLETTER_SCOPE } from '$lib/consent';
+import { normalizeEmail } from '$lib/email';
 import type { Locale } from '$lib/i18n';
 import { sendConfirmationEmail } from './confirmation-email';
-
-// Deliberately permissive - anything address-shaped with an @ and a dot after it. This
-// is a newsletter signup, not account creation: the cost of accepting a slightly
-// malformed address is a bounced email later, the cost of a false rejection is a lost
-// signup on the one page whose entire job is to collect them.
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-/** Trims and lowercases, then returns the address or `null` if it does not look like one. */
-export function normalizeEmail(raw: string): string | null {
-	const trimmed = raw.trim().toLowerCase();
-	return EMAIL_PATTERN.test(trimmed) ? trimmed : null;
-}
 
 export type SubscribeErrorCode = 'invalid_email' | 'save_failed' | 'mail_failed';
 export type SubscribeResult = { ok: true } | { ok: false; error: SubscribeErrorCode };

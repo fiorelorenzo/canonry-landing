@@ -78,6 +78,12 @@
 		<li>what you opted into, at the moment you told us</li>
 		<li>the moment you clicked the confirmation link, blank until you do</li>
 	</ul>
+	<p class="mt-2 max-w-measure text-sm leading-relaxed text-ink-2">
+		Rows collected under the older, narrower promise (one email, when Canonry launched) carry two
+		things more: the moment that one email was sent, so that it can never go out twice, and the
+		moment you accepted the newsletter from it, if you did. The send is recorded against the row,
+		not against your address, and asking to be removed deletes all of it together.
+	</p>
 
 	<h2 class="mt-8 text-lg font-semibold text-ink">Who sees it</h2>
 	<p class="mt-2 max-w-measure text-sm leading-relaxed text-ink-2">
@@ -118,7 +124,8 @@
 
 	<p class="mt-8 text-xs text-muted">
 		This describes the newsletter exactly as `migrations/0001_waitlist_signup.sql`,
-		`migrations/0002_waitlist_consent.sql`, `$lib/consent.ts` and `$lib/server/waitlist.ts` define
-		it today. If that changes, this page changes with it.
+		`migrations/0002_waitlist_consent.sql`, `migrations/0003_launch_notification.sql`,
+		`$lib/consent.ts` and `$lib/server/waitlist.ts` define it today. If that changes, this page
+		changes with it.
 	</p>
 </main>

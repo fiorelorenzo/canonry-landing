@@ -72,6 +72,13 @@
 		<li>a cosa hai aderito, nel momento in cui ce l'hai detto</li>
 		<li>il momento in cui hai cliccato il link di conferma, vuoto finché non lo fai</li>
 	</ul>
+	<p class="mt-2 max-w-measure text-sm leading-relaxed text-ink-2">
+		Le righe raccolte con la promessa precedente, più stretta (una sola email, al lancio di
+		Canonry), hanno due cose in più: il momento in cui quella email è stata inviata, così che non
+		possa partire due volte, e il momento in cui hai accettato la newsletter da lì, se l'hai fatto.
+		L'invio è registrato sulla riga, non sul tuo indirizzo, e chiedere la cancellazione cancella
+		tutto insieme.
+	</p>
 
 	<h2 class="mt-8 text-lg font-semibold text-ink">Chi lo vede</h2>
 	<p class="mt-2 max-w-measure text-sm leading-relaxed text-ink-2">
@@ -114,7 +121,8 @@
 
 	<p class="mt-8 text-xs text-muted">
 		Questa pagina descrive la newsletter esattamente come la definiscono oggi
-		`migrations/0001_waitlist_signup.sql`, `migrations/0002_waitlist_consent.sql`, `$lib/consent.ts`
-		e `$lib/server/waitlist.ts`. Se cambia, cambia anche questa pagina.
+		`migrations/0001_waitlist_signup.sql`, `migrations/0002_waitlist_consent.sql`,
+		`migrations/0003_launch_notification.sql`, `$lib/consent.ts` e `$lib/server/waitlist.ts`. Se
+		cambia, cambia anche questa pagina.
 	</p>
 </main>
