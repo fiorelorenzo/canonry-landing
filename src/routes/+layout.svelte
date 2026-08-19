@@ -31,9 +31,22 @@
 
 	let locale = $derived(localeFromPathname(page.url.pathname));
 
-	const NAV: Record<Locale, { skipToContent: string; pricing: string; export: string }> = {
-		en: { skipToContent: 'Skip to content', pricing: 'Pricing', export: 'Export' },
-		it: { skipToContent: 'Vai al contenuto', pricing: 'Prezzi', export: 'Esportazione' }
+	const NAV: Record<
+		Locale,
+		{ skipToContent: string; pricing: string; export: string; privacy: string }
+	> = {
+		en: {
+			skipToContent: 'Skip to content',
+			pricing: 'Pricing',
+			export: 'Export',
+			privacy: 'Privacy'
+		},
+		it: {
+			skipToContent: 'Vai al contenuto',
+			pricing: 'Prezzi',
+			export: 'Esportazione',
+			privacy: 'Privacy'
+		}
 	};
 	let t = $derived(NAV[locale]);
 
@@ -42,14 +55,20 @@
 	// pricing/export links read a page's own row for the *current* locale; the language
 	// switch below reads the same row for the *other* one - one table instead of a
 	// hardcoded pair per page, so a page only has to be added here once.
-	type PageKey = 'home' | 'pricing' | 'export';
-	const PAGE_KEYS: readonly PageKey[] = ['home', 'pricing', 'export'];
+	type PageKey = 'home' | 'pricing' | 'export' | 'privacy';
+	const PAGE_KEYS: readonly PageKey[] = ['home', 'pricing', 'export', 'privacy'];
 	const PAGE_PATH: Record<Locale, Record<PageKey, ResolvedPathname>> = {
-		en: { home: resolve('/'), pricing: resolve('/pricing'), export: resolve('/docs/export') },
+		en: {
+			home: resolve('/'),
+			pricing: resolve('/pricing'),
+			export: resolve('/docs/export'),
+			privacy: resolve('/privacy')
+		},
 		it: {
 			home: resolve('/it'),
 			pricing: resolve('/it/pricing'),
-			export: resolve('/it/docs/export')
+			export: resolve('/it/docs/export'),
+			privacy: resolve('/it/privacy')
 		}
 	};
 
@@ -102,3 +121,7 @@
 </div>
 
 {@render children()}
+
+<footer class="mx-auto mt-12 max-w-3xl border-t border-line px-6 py-6 text-xs text-muted">
+	<a href={PAGE_PATH[locale].privacy} class="hover:text-ink-2 hover:underline">{t.privacy}</a>
+</footer>
