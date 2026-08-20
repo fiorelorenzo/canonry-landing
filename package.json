@@ -19,7 +19,8 @@
 		"format": "prettier --write .",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run",
-		"migrate": "node scripts/migrate.mjs"
+		"migrate": "node scripts/migrate.mjs",
+		"check:links": "node scripts/check-external-links.mjs"
 	},
 	"dependencies": {
 		"postgres": "^3.4.9"

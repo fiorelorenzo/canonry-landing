@@ -11,7 +11,7 @@
 	 */
 	import { resolve } from '$app/paths';
 	import PropagationDemo from '$lib/components/PropagationDemo.svelte';
-	import { APP_SIGN_UP_URL } from '$lib/app';
+	import { APP_SAMPLE_WORLD_URL, APP_SIGN_UP_URL } from '$lib/app';
 	import NewsletterForm from '$lib/components/NewsletterForm.svelte';
 	import { OG_LOCALE } from '$lib/i18n';
 	import type { ActionData, PageData } from './$types';
@@ -80,6 +80,16 @@
 		<div>
 			<p class="text-sm font-medium text-ink">app.canonry.io è online.</p>
 			<p class="mt-1 text-sm text-ink-2">Crea un account gratuito e inizia il tuo mondo.</p>
+			<!-- Issue #15: l'altra metà di M1. Il mondo dietro questo link è nostro, e la
+			     copy lo dice invece di lasciare credere a chi legge che sia la campagna di un
+			     cliente. Si legge senza account perché il suo master ne ha pubblicata una
+			     parte: è il wiki dei giocatori del prodotto, non una sua imitazione. -->
+			<p class="mt-2 text-sm text-ink-2">
+				Preferisci prima leggere qualcosa?
+				<a href={APP_SAMPLE_WORLD_URL} rel="external" class="text-accent hover:underline">
+					Valdoria Reach è un mondo nostro, pubblicato per i suoi giocatori &rarr;
+				</a>
+			</p>
 		</div>
 		<a
 			href={APP_SIGN_UP_URL}
