@@ -29,6 +29,23 @@ branch protection, all three merge methods enabled, `delete_branch_on_merge` off
 pushing a `v*.*.*` tag deploys to prodbox once `verify-ci.sh` confirms that commit's
 CI run was green — the gate is you.
 
+## Design and UI
+
+Follows the shared UI pipeline (`ui-brief-first`, `ui-design-tokens`, `ui-visual-review`;
+`uishot` renders, `uislop` scores).
+
+- Point `uishot` at `pnpm dev` and screenshot `/` first. Vite binds on `localhost`, not
+  `127.0.0.1`, so a `127.0.0.1` readiness check reports down while the app is up. `/`
+  needs no database; only the waitlist's `subscribe` action touches Postgres, on submit.
+- Tokens: `src/routes/layout.css`'s `@theme` block, 45 named tokens on `:root`, hand-kept
+  in sync with the canonry product repo's own copy (see the file's header comment).
+- No `/design` route. This is a one-page site, not a component library.
+- Dark mode is real: `[data-theme='dark']` (`src/lib/theme.ts`, cookie-backed via
+  `/theme`) overrides the same tokens, so a light/dark pair should differ.
+- Known defect, not fixed here: `--color-muted` (`#857a6a` on `--color-paper` `#f4efe4`)
+  measures 3.67:1, below WCAG AA's 4.5:1; the first shade on that surface clearing AA is
+  `#756b5d` at 4.56:1. Lorenzo's call, on the board.
+
 ## What the copy may and may not say
 
 The product's guardrails are also promises to the reader, so the page inherits them:
