@@ -42,9 +42,22 @@ Follows the shared UI pipeline (`ui-brief-first`, `ui-design-tokens`, `ui-visual
 - No `/design` route. This is a one-page site, not a component library.
 - Dark mode is real: `[data-theme='dark']` (`src/lib/theme.ts`, cookie-backed via
   `/theme`) overrides the same tokens, so a light/dark pair should differ.
-- Known defect, not fixed here: `--color-muted` (`#857a6a` on `--color-paper` `#f4efe4`)
-  measures 3.67:1, below WCAG AA's 4.5:1; the first shade on that surface clearing AA is
-  `#756b5d` at 4.56:1. Lorenzo's call, on the board.
+- `uishot --theme dark` alone does NOT render this site's dark palette. It emulates
+  `prefers-color-scheme`, and `layout.css` only defines `[data-theme='dark']` with no
+  media-query fallback (the gap `src/lib/theme.ts`'s header documents), so an emulated
+  dark run silently re-renders the light palette and passes vacuously. Drive the real
+  palette with the cookie the server reads:
+  `uishot <url> --theme dark --cookie canonry_theme=dark`.
+- `--color-muted` was `#857a6a` and failed WCAG AA on all three paper surfaces
+  (3.67/4.14/3.84). Fixed in #18 by adopting the product repository's own value,
+  `#746b5d`, which measures 4.57:1 on `--color-paper`, 5.16:1 on `--color-panel` and
+  4.78:1 on `--color-panel-2`. The dark palette's `#8e8474` was measured at the same
+  time and already cleared (4.99/4.70/4.93), so it was left alone.
+- Known defect, not fixed in #18 because it is not a token: prose links are
+  `text-accent` with `hover:underline` only, so axe reports `link-in-text-block` at
+  `serious` on `/privacy`, `/it`, `/it/privacy` in both palettes (1.31:1 against the
+  surrounding `--color-ink-2`, and no non-colour distinction). Making prose links
+  permanently underlined is a visual decision, so it is Lorenzo's call.
 
 ## What the copy may and may not say
 
