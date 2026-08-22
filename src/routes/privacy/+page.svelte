@@ -20,6 +20,7 @@
 	 */
 	import { resolve } from '$app/paths';
 	import { APP_PRIVACY_URL } from '$lib/app';
+	import InlineLink from '$lib/components/InlineLink.svelte';
 	import { OG_LOCALE } from '$lib/i18n';
 	import type { PageData } from './$types';
 
@@ -106,20 +107,18 @@
 
 	<h2 class="mt-8 text-lg font-semibold text-ink">How to be removed</h2>
 	<p class="mt-2 max-w-measure text-sm leading-relaxed text-ink-2">
-		Email <a href="mailto:privacy@canonry.io" class="text-accent hover:underline"
-			>privacy@canonry.io</a
-		> with the address you signed up with and we delete the row. There is no self-service unsubscribe
-		link on this site yet - a request by email is the whole process, and it removes the address, the consent
+		Email <InlineLink href="mailto:privacy@canonry.io">privacy@canonry.io</InlineLink>
+		with the address you signed up with and we delete the row. There is no self-service unsubscribe link
+		on this site yet - a request by email is the whole process, and it removes the address, the consent
 		record and the confirmation state together, since they are one row.
 	</p>
 
 	<p class="mt-8 max-w-measure text-sm leading-relaxed text-ink-2">
 		That is the whole of what this page collects. For how the product itself, accounts, campaign
 		content, the AI providers behind it, handles data, see Canonry's own fuller privacy page:
-		<a href={APP_PRIVACY_URL} rel="external" class="text-accent hover:underline"
-			>app.canonry.io/privacy</a
-		>. It covers a different thing - what happens once you have an account, not what happens when
-		you type an email address in here.
+		<InlineLink href={APP_PRIVACY_URL} rel="external">app.canonry.io/privacy</InlineLink>. It covers
+		a different thing - what happens once you have an account, not what happens when you type an
+		email address in here.
 	</p>
 
 	<p class="mt-8 text-xs text-muted">
