@@ -53,11 +53,17 @@ Follows the shared UI pipeline (`ui-brief-first`, `ui-design-tokens`, `ui-visual
   `#746b5d`, which measures 4.57:1 on `--color-paper`, 5.16:1 on `--color-panel` and
   4.78:1 on `--color-panel-2`. The dark palette's `#8e8474` was measured at the same
   time and already cleared (4.99/4.70/4.93), so it was left alone.
-- Known defect, not fixed in #18 because it is not a token: prose links are
-  `text-accent` with `hover:underline` only, so axe reports `link-in-text-block` at
-  `serious` on `/privacy`, `/it`, `/it/privacy` in both palettes (1.31:1 against the
-  surrounding `--color-ink-2`, and no non-colour distinction). Making prose links
-  permanently underlined is a visual decision, so it is Lorenzo's call.
+- Prose links: one component, `src/lib/components/InlineLink.svelte`, mirroring the product
+  repository's `lib/components/ui/link/inline-link.svelte` (its #551) class for class
+  (`text-accent-ink underline decoration-line-2 underline-offset-2 hover:bg-accent-bg`).
+  Underline always on, never hover-only. Use it for a link inside running prose; the
+  header lockup, the nav row, the footer row, the standalone back links and the door's
+  button stay as they are, because an underline on a control is a regression the other
+  way. This closed #20's `link-in-text-block` violations on `/privacy`, `/it`
+  and `/it/privacy` (accent against the surrounding `--color-ink-2` measures 1.31:1 light,
+  1.19:1 dark, so colour alone was the whole distinction). A full `--axe --fail-on serious`
+  sweep of all eight routes in both palettes now exits zero; what is left is `region` on
+  every route and `page-has-heading-one` on the two home pages, both `moderate`.
 
 ## What the copy may and may not say
 

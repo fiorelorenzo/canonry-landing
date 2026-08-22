@@ -13,6 +13,7 @@
 	import PropagationDemo from '$lib/components/PropagationDemo.svelte';
 	import { APP_SAMPLE_WORLD_URL, APP_SIGN_UP_URL } from '$lib/app';
 	import NewsletterForm from '$lib/components/NewsletterForm.svelte';
+	import InlineLink from '$lib/components/InlineLink.svelte';
 	import { OG_LOCALE } from '$lib/i18n';
 	import type { ActionData, PageData } from './$types';
 
@@ -65,9 +66,9 @@
 	     not the English original. -->
 	<p class="mt-3 border-t border-line pt-3 text-sm text-ink-2">
 		Esporta tutto il tuo mondo in markdown, quando vuoi, dalle Impostazioni.
-		<a href={resolve('/it/docs/export')} class="text-accent hover:underline">
+		<InlineLink href={resolve('/it/docs/export')}>
 			Cosa contiene il file, e cosa succede se disattivi l'AI &rarr;
-		</a>
+		</InlineLink>
 	</p>
 
 	<!-- M1 (docs/ux/DECISIONS.md, round eight): la porta d'ingresso. app.canonry.io ora
@@ -86,9 +87,9 @@
 			     parte: è il wiki dei giocatori del prodotto, non una sua imitazione. -->
 			<p class="mt-2 text-sm text-ink-2">
 				Preferisci prima leggere qualcosa?
-				<a href={APP_SAMPLE_WORLD_URL} rel="external" class="text-accent hover:underline">
+				<InlineLink href={APP_SAMPLE_WORLD_URL} rel="external">
 					Valdoria Reach è un mondo nostro, pubblicato per i suoi giocatori &rarr;
-				</a>
+				</InlineLink>
 			</p>
 		</div>
 		<a

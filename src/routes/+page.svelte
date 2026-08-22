@@ -3,6 +3,7 @@
 	import PropagationDemo from '$lib/components/PropagationDemo.svelte';
 	import { APP_SAMPLE_WORLD_URL, APP_SIGN_UP_URL } from '$lib/app';
 	import NewsletterForm from '$lib/components/NewsletterForm.svelte';
+	import InlineLink from '$lib/components/InlineLink.svelte';
 	import { OG_LOCALE } from '$lib/i18n';
 	import type { ActionData, PageData } from './$types';
 
@@ -56,9 +57,9 @@
 	     that states it fully. -->
 	<p class="mt-3 border-t border-line pt-3 text-sm text-ink-2">
 		Export your whole world as markdown, any time, from Settings.
-		<a href={resolve('/docs/export')} class="text-accent hover:underline">
+		<InlineLink href={resolve('/docs/export')}>
 			What's in the file, and what happens if you turn the AI off &rarr;
-		</a>
+		</InlineLink>
 	</p>
 
 	<!-- M1 (docs/ux/DECISIONS.md, round eight): the door. app.canonry.io is the whole
@@ -77,9 +78,9 @@
 			     which is the product's own players' wiki and not a demo of one. -->
 			<p class="mt-2 text-sm text-ink-2">
 				Rather read something first?
-				<a href={APP_SAMPLE_WORLD_URL} rel="external" class="text-accent hover:underline">
+				<InlineLink href={APP_SAMPLE_WORLD_URL} rel="external">
 					Valdoria Reach is a world of ours, published for its players &rarr;
-				</a>
+				</InlineLink>
 			</p>
 		</div>
 		<a

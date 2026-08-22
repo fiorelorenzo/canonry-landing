@@ -13,6 +13,7 @@
 	 */
 	import { resolve } from '$app/paths';
 	import { APP_PRIVACY_URL } from '$lib/app';
+	import InlineLink from '$lib/components/InlineLink.svelte';
 	import { OG_LOCALE } from '$lib/i18n';
 	import type { PageData } from './$types';
 
@@ -102,9 +103,8 @@
 
 	<h2 class="mt-8 text-lg font-semibold text-ink">Come farti cancellare</h2>
 	<p class="mt-2 max-w-measure text-sm leading-relaxed text-ink-2">
-		Scrivi a <a href="mailto:privacy@canonry.io" class="text-accent hover:underline"
-			>privacy@canonry.io</a
-		> con l'indirizzo con cui ti sei iscritto e cancelliamo la riga. Non c'è ancora un link di cancellazione
+		Scrivi a <InlineLink href="mailto:privacy@canonry.io">privacy@canonry.io</InlineLink>
+		con l'indirizzo con cui ti sei iscritto e cancelliamo la riga. Non c'è ancora un link di cancellazione
 		automatica su questo sito - una richiesta via email è tutto il processo, e rimuove indirizzo, consenso
 		e stato di conferma insieme, perché sono la stessa riga.
 	</p>
@@ -113,10 +113,8 @@
 		È tutto quello che questa pagina raccoglie. Per come il prodotto stesso, account, contenuto
 		delle campagne, i provider AI dietro di esso, gestisce i dati, vedi la pagina privacy più ampia
 		di Canonry:
-		<a href={APP_PRIVACY_URL} rel="external" class="text-accent hover:underline"
-			>app.canonry.io/privacy</a
-		>. Copre una cosa diversa: cosa succede dopo che hai un account, non cosa succede quando scrivi
-		un'email qui.
+		<InlineLink href={APP_PRIVACY_URL} rel="external">app.canonry.io/privacy</InlineLink>. Copre una
+		cosa diversa: cosa succede dopo che hai un account, non cosa succede quando scrivi un'email qui.
 	</p>
 
 	<p class="mt-8 text-xs text-muted">
