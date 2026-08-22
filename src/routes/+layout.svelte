@@ -95,12 +95,26 @@
 	{t.skipToContent}
 </a>
 
-<div class="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 pt-6">
+<!-- Issue #22: a `header` rather than a plain `div`, so the wordmark and the nav sit in
+     the banner landmark instead of outside every landmark (axe `region`, moderate, was
+     firing on all eight routes and pointing at the wordmark's own span). -->
+<header class="mx-auto flex max-w-3xl items-center justify-between gap-4 px-6 pt-6">
 	<a href={PAGE_PATH[locale].home} class="flex items-center gap-2 text-ink">
 		<Mark size={22} ariaHidden />
 		<span class="text-lg">Canonry</span>
 	</a>
-	<nav class="flex items-center gap-4 text-sm">
+	<!-- Issue #22: `flex-wrap` is what keeps this row inside the viewport in any language.
+	     The row is `nowrap` with `min-width: auto` on both children, so its minimum width
+	     is the sum of every nav label's min-content width plus the gaps, and a translation
+	     only has to be longer than English for that sum to exceed the 342px of content box
+	     a 390px phone leaves. In Italian it measured 268.2px of nav against 234px of room
+	     and pushed the theme toggle 10.2px past the viewport. Wrapping is the fix at the
+	     level of the pattern rather than of the string: the next language that runs long
+	     reflows onto a second nav line instead of reopening this issue. `justify-end`
+	     keeps both lines flush with the right edge the single-line layout already used,
+	     and is inert whenever the nav fits on one line (tablet and desktop, both
+	     locales). -->
+	<nav class="flex flex-wrap items-center justify-end gap-4 text-sm">
 		<a href={PAGE_PATH[locale].pricing} class="text-ink-2 hover:text-ink hover:underline"
 			>{t.pricing}</a
 		>
@@ -118,7 +132,7 @@
 		{/if}
 		<ThemeToggle preference={data.themePreference} />
 	</nav>
-</div>
+</header>
 
 {@render children()}
 
