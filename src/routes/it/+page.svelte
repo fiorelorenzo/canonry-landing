@@ -55,9 +55,11 @@
 
 <main id="main" class="mx-auto max-w-3xl px-6 pt-6 pb-16">
 	<!-- F6 = C: the demo is the hero, no copy above it - same rule as the English page. -->
-	<p class="mb-3 text-sm text-muted">
+	<!-- Issue #22: the page's heading, marked up as one. Same classes, so same pixels;
+	     see the English page for why. -->
+	<h1 class="mb-3 text-sm text-muted">
 		Canonry: un wiki con un copilota AI che non scrive mai senza di te.
-	</p>
+	</h1>
 
 	<PropagationDemo />
 

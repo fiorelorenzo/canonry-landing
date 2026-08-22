@@ -47,9 +47,14 @@
 	<!-- F6 = C: the demo is the hero, no copy above it. This is the one line the decision
 	     keeps ("Keep the one-line descriptor exactly as drawn") - everything else a
 	     visitor reads is either the real demo below or the below-the-fold strip after it. -->
-	<p class="mb-3 text-sm text-muted">
+	<!-- Issue #22: this line is the page's heading, so it is marked up as one. It stays
+	     the same element in every other respect (same classes, so the same 14px muted
+	     type and the same 12px below it), because Tailwind's preflight resets a heading's
+	     font, weight and margin: the fix answers axe `page-has-heading-one` without
+	     spending a pixel or breaking F6's "no copy above the demo". -->
+	<h1 class="mb-3 text-sm text-muted">
 		Canonry: a wiki with an AI copilot that never writes without you.
-	</p>
+	</h1>
 
 	<PropagationDemo />
 

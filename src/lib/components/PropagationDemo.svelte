@@ -111,11 +111,15 @@
 		{/each}
 	</div>
 
+	<!-- Issue #22: these panel titles are `h2`, not `h3`. The two home pages that render
+	     this demo now open with a real `h1` (the one-line descriptor), and this is the
+	     first level under it, so `h3` here would skip a level and trade one axe finding
+	     for another (`heading-order`). Same classes either way, so the same pixels. -->
 	<div class="p-4">
 		{#if activeTab === 'edit'}
 			<div class="rounded-lg border border-line bg-panel p-4" data-demo-step="edit">
 				<header class="mb-2 flex items-center justify-between gap-3">
-					<h3 class="text-base font-semibold text-ink">{world.edit.entity}</h3>
+					<h2 class="text-base font-semibold text-ink">{world.edit.entity}</h2>
 					<span
 						class="rounded-full bg-panel-2 px-1.5 py-0.5 font-mono text-xs text-muted uppercase"
 					>
@@ -131,9 +135,9 @@
 			</div>
 		{:else if activeTab === 'plan'}
 			<div class="rounded-lg border border-line bg-panel p-4" data-demo-step="plan">
-				<h3 class="mb-3 text-base font-semibold text-ink">
+				<h2 class="mb-3 text-base font-semibold text-ink">
 					{t.planHeading(world.plan.length)}
-				</h3>
+				</h2>
 				<ul class="flex flex-col gap-2">
 					{#each world.plan as row (row.entity)}
 						<li class="flex flex-wrap items-baseline gap-2 text-sm">
@@ -149,7 +153,7 @@
 		{:else}
 			<div class="rounded-lg border border-line bg-panel p-4" data-demo-step="diff">
 				<header class="mb-2 flex items-start justify-between gap-3">
-					<h3 class="text-base font-semibold text-ink">{world.diff.entity}</h3>
+					<h2 class="text-base font-semibold text-ink">{world.diff.entity}</h2>
 					<span
 						class="rounded-full bg-panel-2 px-1.5 py-0.5 font-mono text-xs text-muted uppercase"
 					>
