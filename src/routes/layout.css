@@ -38,7 +38,24 @@
 	--color-panel-2: #f9f4ea;
 	--color-ink: #221d16;
 	--color-ink-2: #4c4238;
-	--color-muted: #857a6a;
+	/* Issue #18, adopting the product repository's own fix (canonry #469, closing its
+	 * #369) rather than choosing a value here: this token had drifted, and the drift is
+	 * half the defect. Darkened on its own hue rather than inverted from the dark value
+	 * below, same 36.5deg warm hue and ~11% saturation, lightness 0.469 to 0.410, so
+	 * every surface it sits on clears the 4.5:1 AA floor for small text: 4.57:1 against
+	 * --color-paper, 5.16:1 against --color-panel, 4.78:1 against --color-panel-2,
+	 * replacing the 3.67/4.14/3.84 the old #857a6a carried. The issue proposed #756b5d
+	 * (4.56/5.14/4.77), which also clears; the product's value is one step further and
+	 * keeps the two copies identical, which #756b5d would not.
+	 *
+	 * Secondary text on any of the five tinted backgrounds (accent-bg, ai-bg, ok-bg,
+	 * warn-bg, danger-bg) is --color-ink-2, never --color-muted. Measured, because it is
+	 * not obvious: muted fails AA against all five in dark and against three of them in
+	 * light (accent 4.30/3.97, ai 4.54/4.28, ok 4.45/3.86, warn 4.54/4.06, danger
+	 * 4.37/4.39, light/dark). ink-2 clears all ten with room, 7.84 at worst. Muted is a
+	 * paper-and-panel ink: right on --color-paper, --color-panel and --color-panel-2,
+	 * wrong the moment a surface takes a hue. Nothing on this site pairs them today. */
+	--color-muted: #746b5d;
 	--color-line: #e2d8c6;
 	--color-line-2: #cfc2ab;
 	--color-accent: #7a4a1f;
@@ -72,6 +89,11 @@
 		--color-panel-2: #191510;
 		--color-ink: #f1e9db;
 		--color-ink-2: #cabfae;
+		/* Issue #18: the dark palette had never been measured, so it was measured rather
+		 * than assumed. It already clears AA on every dark surface and is left alone, the
+		 * same value and the same conclusion as the product's own --dark-muted: 4.99:1
+		 * against --color-paper, 4.70:1 against --color-panel, 4.93:1 against
+		 * --color-panel-2, all >= 4.5:1. */
 		--color-muted: #8e8474;
 		--color-line: #2d271e;
 		--color-line-2: #3d3529;

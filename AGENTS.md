@@ -29,6 +29,36 @@ branch protection, all three merge methods enabled, `delete_branch_on_merge` off
 pushing a `v*.*.*` tag deploys to prodbox once `verify-ci.sh` confirms that commit's
 CI run was green — the gate is you.
 
+## Design and UI
+
+Follows the shared UI pipeline (`ui-brief-first`, `ui-design-tokens`, `ui-visual-review`;
+`uishot` renders, `uislop` scores).
+
+- Point `uishot` at `pnpm dev` and screenshot `/` first. Vite binds on `localhost`, not
+  `127.0.0.1`, so a `127.0.0.1` readiness check reports down while the app is up. `/`
+  needs no database; only the waitlist's `subscribe` action touches Postgres, on submit.
+- Tokens: `src/routes/layout.css`'s `@theme` block, 45 named tokens on `:root`, hand-kept
+  in sync with the canonry product repo's own copy (see the file's header comment).
+- No `/design` route. This is a one-page site, not a component library.
+- Dark mode is real: `[data-theme='dark']` (`src/lib/theme.ts`, cookie-backed via
+  `/theme`) overrides the same tokens, so a light/dark pair should differ.
+- `uishot --theme dark` alone does NOT render this site's dark palette. It emulates
+  `prefers-color-scheme`, and `layout.css` only defines `[data-theme='dark']` with no
+  media-query fallback (the gap `src/lib/theme.ts`'s header documents), so an emulated
+  dark run silently re-renders the light palette and passes vacuously. Drive the real
+  palette with the cookie the server reads:
+  `uishot <url> --theme dark --cookie canonry_theme=dark`.
+- `--color-muted` was `#857a6a` and failed WCAG AA on all three paper surfaces
+  (3.67/4.14/3.84). Fixed in #18 by adopting the product repository's own value,
+  `#746b5d`, which measures 4.57:1 on `--color-paper`, 5.16:1 on `--color-panel` and
+  4.78:1 on `--color-panel-2`. The dark palette's `#8e8474` was measured at the same
+  time and already cleared (4.99/4.70/4.93), so it was left alone.
+- Known defect, not fixed in #18 because it is not a token: prose links are
+  `text-accent` with `hover:underline` only, so axe reports `link-in-text-block` at
+  `serious` on `/privacy`, `/it`, `/it/privacy` in both palettes (1.31:1 against the
+  surrounding `--color-ink-2`, and no non-colour distinction). Making prose links
+  permanently underlined is a visual decision, so it is Lorenzo's call.
+
 ## What the copy may and may not say
 
 The product's guardrails are also promises to the reader, so the page inherits them:
