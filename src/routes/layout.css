@@ -10,8 +10,16 @@
  *          proportional face makes them harder to compare.
  * G1 = B, dark is a whole-app preference rather than a table-mode skin, so both
  *          palettes are first class and every surface has to hold up in both.
- * C1 = B, unaccepted AI text is an underline plus a margin marker, and violet is
- *          reserved for the copilot. Nothing else in the product may spend it.
+ * C1 = B, unaccepted AI text is a dashed underline plus a numbered margin marker.
+ *          Round eleven P1 gave that mark its own hue; round sixteen U10 (the canonry
+ *          product repository's #454) deleted it after three rounds of the same hue
+ *          being misused elsewhere, and the mark now runs on --color-diff-line below,
+ *          the same value signal the diff already used. Nothing in either property
+ *          spends a hue on "an AI wrote this".
+ * P3 = round eleven, the diff owns a hue-less pair: --color-diff-bg moves in lightness
+ *          within paper's own hue, --color-diff-line carries the boundary. U10 puts
+ *          C1's mark on that same --color-diff-line, since a shape meaning "unaccepted"
+ *          and a bar meaning "changed" never land on one sentence at once.
  *
  * The canonry product repository's own web app owns this file's source of truth;
  * this is a deliberate copy, not a shared import (see src/lib/theme.ts's header
@@ -48,11 +56,11 @@
 	 * (4.56/5.14/4.77), which also clears; the product's value is one step further and
 	 * keeps the two copies identical, which #756b5d would not.
 	 *
-	 * Secondary text on any of the five tinted backgrounds (accent-bg, ai-bg, ok-bg,
+	 * Secondary text on any of the five tinted backgrounds (accent-bg, diff-bg, ok-bg,
 	 * warn-bg, danger-bg) is --color-ink-2, never --color-muted. Measured, because it is
-	 * not obvious: muted fails AA against all five in dark and against three of them in
-	 * light (accent 4.30/3.97, ai 4.54/4.28, ok 4.45/3.86, warn 4.54/4.06, danger
-	 * 4.37/4.39, light/dark). ink-2 clears all ten with room, 7.84 at worst. Muted is a
+	 * not obvious: muted fails AA against all five in dark and against four of them in
+	 * light (accent 4.30/3.97, diff 3.59/3.52, ok 4.45/3.86, warn 4.54/4.06, danger
+	 * 4.37/4.39, light/dark). ink-2 clears all ten with room, 6.70 at worst. Muted is a
 	 * paper-and-panel ink: right on --color-paper, --color-panel and --color-panel-2,
 	 * wrong the moment a surface takes a hue. Nothing on this site pairs them today. */
 	--color-muted: #746b5d;
@@ -62,10 +70,25 @@
 	--color-accent-ink: #5c3714;
 	--color-accent-bg: #f3e7d5;
 
-	/* The copilot's hue, and only the copilot's. */
-	--color-ai: #6b4ee6;
-	--color-ai-bg: #f1ecff;
-	--color-ai-line: #c8bafa;
+	/* Issue #21, brought across from the product repository the way #18 brought
+	 * --color-muted: the copilot's own --color-ai / --color-ai-bg / --color-ai-line were
+	 * deleted there by round sixteen U10 (its #454) and are deleted here with them, so
+	 * the demo paints what the product paints. This is P3's hue-less pair in their
+	 * place, same values as the product's own: --color-diff-bg is paper's hue and
+	 * paper's chroma at a lower lightness, so "this clause changed" is a value signal
+	 * and nothing else, and --color-diff-line is the printer's change bar carrying the
+	 * boundary.
+	 *
+	 * Measured against the surfaces this site actually puts them on, which is
+	 * --color-panel (the demo's step cards) rather than the product's own card:
+	 * --color-diff-line reads 4.57:1 on --color-panel in light and 4.03:1 in dark, and
+	 * 3.18:1 / 3.02:1 against its own --color-diff-bg fill, all past the 3:1 a non-text
+	 * mark needs. The wash itself is deliberately quiet, 1.44:1 / 1.34:1 against
+	 * --color-panel: it is support, and the change bar plus the strikethrough are what
+	 * carry the meaning. Text on the wash is --color-ink at 11.44:1 / 10.75:1 and
+	 * --color-ink-2 at 6.70:1 / 7.14:1. */
+	--color-diff-bg: #dad5cb;
+	--color-diff-line: #7a7466;
 
 	--color-ok: #2f6b45;
 	--color-ok-bg: #e6efe1;
@@ -100,9 +123,10 @@
 		--color-accent: #d9a94a;
 		--color-accent-ink: #ebc884;
 		--color-accent-bg: #33270f;
-		--color-ai: #b8a2ff;
-		--color-ai-bg: #241f3a;
-		--color-ai-line: #473d6d;
+		/* Issue #21: the product's own --dark-diff-bg and --dark-diff-line, replacing the
+		 * three deleted --color-ai* values. Numbers in the light block above. */
+		--color-diff-bg: #34312b;
+		--color-diff-line: #81796d;
 		--color-ok: #7cc78f;
 		--color-ok-bg: #16301f;
 		--color-warn: #dcb45f;
