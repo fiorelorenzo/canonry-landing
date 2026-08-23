@@ -39,6 +39,8 @@
 		planFooterAfter: string;
 		diffBadge: (position: number, total: number) => string;
 		evidenceLabel: string;
+		removedLabel: string;
+		addedLabel: string;
 		accept: string;
 		reject: string;
 		statusAccepted: (entity: string) => string;
@@ -57,6 +59,8 @@
 			planFooterAfter: '\u201d to review one.',
 			diffBadge: (position, total) => `entry ${position} of ${total}`,
 			evidenceLabel: 'Evidence:',
+			removedLabel: 'Removed:',
+			addedLabel: 'Added:',
 			accept: 'Accept',
 			reject: 'Reject',
 			statusAccepted: (entity) => `Accepted, added to ${entity}'s revision history`,
@@ -73,6 +77,8 @@
 			planFooterAfter: '\u00bb per rivederne una.',
 			diffBadge: (position, total) => `voce ${position} di ${total}`,
 			evidenceLabel: 'Prova:',
+			removedLabel: 'Rimosso:',
+			addedLabel: 'Aggiunto:',
 			accept: 'Accetta',
 			reject: 'Rifiuta',
 			statusAccepted: (entity) => `Accettato, aggiunto allo storico delle revisioni di ${entity}`,
@@ -126,8 +132,17 @@
 						{world.edit.entityType}
 					</span>
 				</header>
-				<p class="max-w-measure text-sm text-ink-2">
-					<span class="rounded-sm bg-ai-bg px-1 py-0.5 text-ink">{world.edit.after}</span>
+				<!-- Issue #21: the sentence the GM has just written, marked with P3's change bar
+				     and its wash rather than with a tint meaning "an AI wrote this". This text is
+				     the human's own, so the copilot's hue was saying the opposite of what is true
+				     here even before the product deleted that hue (its round sixteen U10, #454,
+				     and the same reading its round seventeen V6 took of `entryMarking.ts`). The
+				     bar and the wash claim only "this clause changed", which is exactly what the
+				     step is showing. -->
+				<p
+					class="max-w-measure border-l-2 border-diff-line bg-diff-bg py-0.5 pr-2 pl-3 text-sm text-ink"
+				>
+					{world.edit.after}
 				</p>
 				<p class="mt-3 text-xs text-muted">
 					{t.savedNoticeBefore}{t.tabs.plan}{t.savedNoticeAfter}
@@ -161,9 +176,27 @@
 					</span>
 				</header>
 				<p class="mb-3 text-xs text-muted">{t.evidenceLabel} {world.diff.evidence}</p>
+				<!-- Issue #21: this is the product's own proposal diff, copied from
+				     `ProposalDiffCard.svelte` in the canonry product repository. Both rows sit in
+				     P3's hue-less pair (the wash plus a change bar), removal is carried by a
+				     strikethrough in --color-diff-line and arrival by weight in --color-ink, and
+				     the copilot's hue is nowhere, because the product deleted it in round sixteen
+				     (U10, its #454). What says "nobody has accepted this yet" is the same thing
+				     that says it in the product: the Accept and Reject below, and the status
+				     beside them. Strike and weight are shape rather than colour, so the two
+				     sr-only labels are what a screen reader gets instead. -->
 				<div class="mb-3 max-w-measure text-sm leading-relaxed">
-					<p class="mb-1.5 text-muted line-through decoration-line-2">{world.diff.removed}</p>
-					<p class="rounded-sm bg-ai-bg px-1 py-0.5 text-ink">{world.diff.added}</p>
+					<p class="mb-1.5 border-l-2 border-diff-line bg-diff-bg py-0.5 pr-2 pl-3 text-ink-2">
+						<!-- The trailing space is an entity because a mustache holding a string literal
+						     is a lint error, and without it a screen reader runs the label into the
+						     sentence. -->
+						<span class="sr-only">{t.removedLabel}&#32;</span>
+						<span class="line-through decoration-diff-line decoration-2">{world.diff.removed}</span>
+					</p>
+					<p class="border-l-2 border-diff-line bg-diff-bg py-0.5 pr-2 pl-3">
+						<span class="sr-only">{t.addedLabel}&#32;</span>
+						<span class="font-semibold text-ink">{world.diff.added}</span>
+					</p>
 				</div>
 
 				{#if outcome === 'pending'}
