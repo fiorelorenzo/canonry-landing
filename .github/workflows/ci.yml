@@ -79,8 +79,12 @@ jobs:
 
   test:
     name: Lint, typecheck, test, build
+    # needs: changes; `always()` is required, not decoration: changes is skipped
+    # on push (its own if is PR-only), and a job whose needs was skipped is
+    # cascade-skipped by GitHub Actions regardless of its own if unless that if
+    # contains always() -- without it, push to main silently ran nothing.
     needs: changes
-    if: github.event_name == 'push' || needs.changes.outputs.app == 'true'
+    if: always() && (github.event_name == 'push' || needs.changes.outputs.app == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -129,7 +133,7 @@ jobs:
     name: Build image, apply migration, verify served health
     runs-on: ubuntu-latest
     needs: [changes, test]
-    if: github.event_name != 'pull_request'
+    if: always() && github.event_name != 'pull_request'
     timeout-minutes: 15
     services:
       postgres:
