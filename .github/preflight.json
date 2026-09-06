@@ -1,0 +1,41 @@
+{
+	"base": "origin/main",
+	"jobs": 2,
+	"checks": [
+		{
+			"id": "test",
+			"run": "pnpm install --frozen-lockfile && pnpm lint && pnpm check && pnpm test && pnpm build && pnpm check:links",
+			"when": [
+				"src/**",
+				"migrations/**",
+				"scripts/**",
+				"static/**",
+				"docker/**",
+				"package.json",
+				"pnpm-lock.yaml",
+				"svelte.config.js",
+				"vite.config.ts",
+				"tsconfig.json",
+				"eslint.config.js",
+				"prettier.config.js",
+				".node-version"
+			],
+			"why": "mirrors the PR-path test job: lint, typecheck, unit tests, build, and the live link check"
+		},
+		{
+			"id": "image",
+			"run": "scripts/ci-image-boot.sh",
+			"when": [
+				"src/**",
+				"migrations/**",
+				"docker/**",
+				"package.json",
+				"pnpm-lock.yaml",
+				"scripts/ci-image-boot.sh"
+			],
+			"why": "mirrors the main-only docker-boot job: builds the runtime image, applies the migration against a scratch Postgres, and proves /healthz and the waitlist form end to end. Not run on every push locally, only when you want the same proof CI gets on merge",
+			"serial": true,
+			"lock": "canonry-landing-image"
+		}
+	]
+}

@@ -23,11 +23,16 @@ containers instead of getting their own — only run it in one worktree at a tim
 `pnpm test` never touches Postgres (`subscribe()`'s tests pass a fake `postgres.Sql`),
 so lint, check and unit tests are safe from any worktree without the stack up. CI's
 `docker-boot` job additionally boots the built image against its own ephemeral
-Postgres service and hits `/healthz` and the waitlist form end to end; nothing local
-reproduces that job, so do not report it as verified. Nothing guards `main`: no
-branch protection, all three merge methods enabled, `delete_branch_on_merge` off, and
-pushing a `v*.*.*` tag deploys to prodbox once `verify-ci.sh` confirms that commit's
-CI run was green — the gate is you.
+Postgres service and hits `/healthz` and the waitlist form end to end; it only runs
+on push to main now (a PR gets `test` only, gated by a `changes` filter on this
+app's own paths), so a PR never waits on it. `preflight` (`.github/preflight.json`,
+`scripts/ci-image-boot.sh`) reproduces the same check locally against its own
+ephemeral Postgres, so it is fine to report it as verified once that check has
+actually run and passed — just say so, don't assume it from the PR-path `test` job
+alone. Nothing guards `main`: no branch protection, all three merge methods
+enabled, `delete_branch_on_merge` off, and pushing a `v*.*.*` tag deploys to
+prodbox once `verify-ci.sh` confirms that commit's CI run was green — the gate is
+you.
 
 ## Design and UI
 
