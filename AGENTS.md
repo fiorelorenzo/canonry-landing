@@ -87,19 +87,16 @@ The product's guardrails are also promises to the reader, so the page inherits t
 
 ## The board
 
-Work is tracked on **Project #9 "Canonry roadmap"** (owner `fiorelorenzo`), the same
-board as the product: one roadmap, two repositories. Same four fields (`Status`,
-`Priority`, `Effort`, `Parallel`), same label taxonomy, and **every issue under an
-epic, with no exceptions, including an issue filed in the middle of an agent run.**
-The epics live in the canonry repository, apart from this repo's own `#1 [Epic]
-Landing and public site` (closed, and a closed epic still accepts children), so a
-landing issue is parented over there when that is where it belongs. Parent it in the
-same turn you create it: an issue with no parent is a defect in the board, and the
-one way it happens is an agent filing a real finding mid-run, setting its labels and
-its four fields, and forgetting the step that is a separate GraphQL mutation. When a
-subagent files something on your behalf, parenting it is yours rather than theirs.
-See the canonry repository's `AGENTS.md` for the full contract, the commands, and the
-audit query that proves the board has no orphans left.
+This repo has no initiative and no project board of its own in Linear. Its
+work lives under the `canonry` initiative, in the project `canonry v1 - The
+product is sellable`, milestone `The landing page: deploy and gates`, tagged
+with the repo label `canonry-landing`. File and read issues there, in the
+`linear.app/fiorelorenzo` workspace, through the `linear-personal` MCP
+server: before the first write in a session, make a read call (`list_projects`
+or `list_issues`) and check the workspace name that comes back, since two
+Linear workspaces are reachable from this box. See the canonry repository's
+`AGENTS.md` for the full contract: label taxonomy, states, and how priority
+and estimate work as native fields rather than labels.
 
 `area:*` values here: `landing`, `copy`, `design`, `deploy`.
 
