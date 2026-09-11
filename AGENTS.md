@@ -34,6 +34,34 @@ enabled, `delete_branch_on_merge` off, and pushing a `v*.*.*` tag deploys to
 prodbox once `verify-ci.sh` confirms that commit's CI run was green — the gate is
 you.
 
+## Pull requests
+
+One shape for every repo of mine: `skill://opening-a-pull-request`. The issue and its
+neighbours before the branch, the branch name Linear renders on the issue, Conventional
+Commits in the first person, the body's four sections from
+`.github/PULL_REQUEST_TEMPLATE.md` (Screenshots is never deleted), an independent review
+applied in a second commit, and the card closed only against evidence. What is true only
+here:
+
+- **Scopes** for the subject: this repo's own `area:*` values: `landing`, `copy`,
+  `design`, `deploy`, matching the labels above, plus the bare `docs`, `ci`, `fix`,
+  `feat`, `style` types this repo's own history already uses with no scope at all when
+  nothing narrower fits.
+- **Required check**: there is no required check. The branch ruleset on `main`
+  (`deletion`, `non_fast_forward`) only stops a force-push and a delete; it names no PR
+  requirement and no status check, so nothing here fails a merge for a red run. `ci`
+  (`.github/workflows/ci.yml`) still runs and is worth watching, and `preflight`
+  (`.github/preflight.json`) is the local stand-in for its `docker-boot` job, which
+  never runs on a PR.
+- **Merge**: `main` takes direct pushes today, so the template is a convention, not a
+  gate: it applies the moment a change is big enough to want a second reading, not to
+  every commit. When a PR does go up, all three merge methods are enabled (squash,
+  merge, rebase), `allow_auto_merge` is off, and `delete_branch_on_merge` is off, so
+  pick a method by hand (`gh pr merge <n> --squash --delete-branch` matches every other
+  repo of mine) and delete the branch yourself. Local `main` comes back with
+  `git checkout main && git pull --ff-only` afterward, never a hard reset, since the
+  shared checkout can carry another session's uncommitted work.
+
 ## Design and UI
 
 Follows the shared UI pipeline (`ui-brief-first`, `ui-design-tokens`, `ui-visual-review`;
