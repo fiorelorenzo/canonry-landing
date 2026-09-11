@@ -93,7 +93,7 @@ product is sellable`, milestone `The landing page: deploy and gates`, tagged
 with the repo label `canonry-landing`. File and read issues there, in the
 `linear.app/fiorelorenzo` workspace, through the `linear-personal` MCP
 server: before the first write in a session, make a read call (`list_projects`
-or `list_issues`) and check the workspace name that comes back, since two
+or `list_issues`) and check the workspace name that comes back, since three
 Linear workspaces are reachable from this box. See the canonry repository's
 `AGENTS.md` for the full contract: label taxonomy, states, and how priority
 and estimate work as native fields rather than labels.
