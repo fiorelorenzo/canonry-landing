@@ -116,8 +116,8 @@ The product's guardrails are also promises to the reader, so the page inherits t
 ## The board
 
 This repo has no initiative and no project board of its own in Linear. Its
-work lives under the `canonry` initiative, in the project `canonry v1 - The
-product is sellable`, milestone `The landing page: deploy and gates`, tagged
+work lives under the `canonry` initiative, in the project `Make the product
+sellable`, milestone `Ship the landing page and its gates`, tagged
 with the repo label `canonry-landing`. File and read issues there, in the
 `linear.app/fiorelorenzo` workspace, through the `linear-personal` MCP
 server: before the first write in a session, make a read call (`list_projects`
