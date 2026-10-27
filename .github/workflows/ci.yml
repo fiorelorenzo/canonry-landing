@@ -8,7 +8,8 @@
 # directly, with no workspace and no Qdrant service, because this app never talks to
 # vector search.
 #
-# Three tiers: `changes` scopes a PR to whether this app's own paths moved at all,
+# Four jobs behind the aggregate: `kit` checks the workflow kit's copy and a PR's text
+# and always runs; the other three are tiers. `changes` scopes a PR to whether this app's own paths moved at all,
 # `test` is the PR-path gate (lint, typecheck, unit tests, build, link check), and
 # `docker-boot` (the image build + migration + served-health proof) only runs on
 # push to main, because it needs several minutes and a live Postgres and nobody

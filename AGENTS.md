@@ -54,17 +54,18 @@ merge sha and what was verified).
 What is true only here:
 
 - **Scopes** for the subject: this repo's own `area:*` values: `landing`, `copy`,
-  `design`, `deploy`, matching the labels above, plus the bare `docs`, `ci`, `fix`,
-  `feat`, `style` types this repo's own history already uses with no scope at all when
-  nothing narrower fits.
-- **Required check**: there is no required check. The branch ruleset on `main`
-  (`deletion`, `non_fast_forward`) only stops a force-push and a delete; it names no PR
-  requirement and no status check, so nothing here fails a merge for a red run. `ci`
-  (`.github/workflows/ci.yml`) still runs and is worth watching, and
-  `python3 .github/kit/bin/preflight` (`.github/preflight.json`) is the local stand-in for its `docker-boot` job, which
-  never runs on a PR.
-- **Merge**: `main` takes direct pushes today, so the template is a convention, not a
-  gate: it applies the moment a change is big enough to want a second reading, not to
+  `design`, `deploy`, matching the labels above, and `agents`, `repo`, `deps`, `ci`
+  (`docs(agents): ...`), all listed in `.github/workflow.json`. Bare types with no scope
+  (`docs`, `fix`, `feat`, `style`) are what this repo's own history also uses when nothing
+  narrower fits.
+- **Required check**: `ci` is the check to wait for, but no ruleset requires it. The
+  branch ruleset on `main` (`deletion`, `non_fast_forward`) only stops a force-push and a
+  delete; it names no PR requirement and no status check, so nothing here fails a merge
+  for a red run. `ci` (`.github/workflows/ci.yml`) still runs and is worth watching, and
+  `python3 .github/kit/bin/preflight` (`.github/preflight.json`) is the local stand-in for
+  its `docker-boot` job, which never runs on a PR.
+- **Merge**: `main` takes direct pushes today, so the template is enforced by a red `ci` (the
+  `kit` job), not by a ruleset: it applies the moment a change is big enough to want a second reading, not to
   every commit. When a PR does go up, all three merge methods are enabled (squash,
   merge, rebase), `allow_auto_merge` is off, and `delete_branch_on_merge` is off, so
   pick a method by hand (`gh pr merge <n> --squash --delete-branch` matches every other
