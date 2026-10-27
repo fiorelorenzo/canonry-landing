@@ -25,8 +25,8 @@ so lint, check and unit tests are safe from any worktree without the stack up. C
 `docker-boot` job additionally boots the built image against its own ephemeral
 Postgres service and hits `/healthz` and the waitlist form end to end; it only runs
 on push to main now (a PR gets `test` only, gated by a `changes` filter on this
-app's own paths), so a PR never waits on it. `preflight` (`.github/preflight.json`,
-`scripts/ci-image-boot.sh`) reproduces the same check locally against its own
+app's own paths), so a PR never waits on it. `python3 .github/kit/bin/preflight`
+(`.github/preflight.json`, `scripts/ci-image-boot.sh`) reproduces the same check locally against its own
 ephemeral Postgres, so it is fine to report it as verified once that check has
 actually run and passed — just say so, don't assume it from the PR-path `test` job
 alone. Nothing guards `main`: no branch protection, all three merge methods
@@ -34,27 +34,38 @@ enabled, `delete_branch_on_merge` off, and pushing a `v*.*.*` tag deploys to
 prodbox once `verify-ci.sh` confirms that commit's CI run was green — the gate is
 you.
 
-## Pull requests
+## Workflow kit
 
-One shape for every repo of mine: `skill://opening-a-pull-request`. The issue and its
-neighbours before the branch, the branch name Linear renders on the issue, Conventional
-Commits in the first person, the body's four sections from
-`.github/PULL_REQUEST_TEMPLATE.md` (Screenshots is never deleted), an independent review
-applied in a second commit, and the card closed only against evidence. What is true only
-here:
+The procedure for cards, commits and pull requests is the workflow kit's, copied from
+`letsrebase/rebase` (`tooling/workflow-kit/`): the skills `linear-ticket`, `linear-content`
+and `pr-creation` in `.agents/skills/` (a copy in `.claude/skills/` for Claude Code), the
+data in `.github/workflow.json`. `ci` runs `python3 .github/kit/bin/kit.py check` and, on a
+pull request, `python3 .github/kit/bin/pr_lint.py --github`; a hook refuses a malformed
+Linear write in Claude Code and in omp. Do not edit the kit's files here: change the kit,
+then `kit.py sync`.
+
+The rules in five lines, for an agent with no skills: file the card before the branch;
+Conventional Commits in the first person, the card id as the last line (`LOR-N.`); the PR
+body keeps the template's sections, Screenshots included; its last line is `Linear: LOR-N.`;
+squash merge once `ci` is green; an independent review is applied in a second
+commit before the PR opens, and the card is closed only against evidence (a comment with the
+merge sha and what was verified).
+
+What is true only here:
 
 - **Scopes** for the subject: this repo's own `area:*` values: `landing`, `copy`,
-  `design`, `deploy`, matching the labels above, plus the bare `docs`, `ci`, `fix`,
-  `feat`, `style` types this repo's own history already uses with no scope at all when
-  nothing narrower fits.
-- **Required check**: there is no required check. The branch ruleset on `main`
-  (`deletion`, `non_fast_forward`) only stops a force-push and a delete; it names no PR
-  requirement and no status check, so nothing here fails a merge for a red run. `ci`
-  (`.github/workflows/ci.yml`) still runs and is worth watching, and `preflight`
-  (`.github/preflight.json`) is the local stand-in for its `docker-boot` job, which
-  never runs on a PR.
-- **Merge**: `main` takes direct pushes today, so the template is a convention, not a
-  gate: it applies the moment a change is big enough to want a second reading, not to
+  `design`, `deploy`, matching the labels above, and `agents`, `repo`, `deps`, `ci`
+  (`docs(agents): ...`), all listed in `.github/workflow.json`. Bare types with no scope
+  (`docs`, `fix`, `feat`, `style`) are what this repo's own history also uses when nothing
+  narrower fits.
+- **Required check**: `ci` is the check to wait for, but no ruleset requires it. The
+  branch ruleset on `main` (`deletion`, `non_fast_forward`) only stops a force-push and a
+  delete; it names no PR requirement and no status check, so nothing here fails a merge
+  for a red run. `ci` (`.github/workflows/ci.yml`) still runs and is worth watching, and
+  `python3 .github/kit/bin/preflight` (`.github/preflight.json`) is the local stand-in for
+  its `docker-boot` job, which never runs on a PR.
+- **Merge**: `main` takes direct pushes today, so the template is enforced by a red `ci` (the
+  `kit` job), not by a ruleset: it applies the moment a change is big enough to want a second reading, not to
   every commit. When a PR does go up, all three merge methods are enabled (squash,
   merge, rebase), `allow_auto_merge` is off, and `delete_branch_on_merge` is off, so
   pick a method by hand (`gh pr merge <n> --squash --delete-branch` matches every other
