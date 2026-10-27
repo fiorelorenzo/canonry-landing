@@ -6,3 +6,9 @@ pnpm-lock.yaml
 # lint scope, the same way the canonry product repository's apps/landing package
 # never had markdown files in its own `prettier --check .` scope either.
 *.md
+
+# Copied from the workflow kit, checked by kit.py check instead.
+.agents/
+.claude/
+.github/kit/
+.omp/
